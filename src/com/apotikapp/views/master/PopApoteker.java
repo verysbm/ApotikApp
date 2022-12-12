@@ -4,19 +4,51 @@
  */
 package com.apotikapp.views.master;
 
+import Koneksi.Koneksi;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author HP
  */
 public class PopApoteker extends javax.swing.JFrame {
-
+    ResultSet Rs;
     /**
      * Creates new form PopObat
      */
     public PopApoteker() {
         initComponents();
+        setLocationRelativeTo(this);
     }
 
+//     public void Reset(){
+//        txtidpetugas.setText(null);
+//        txtnama.setText(null);
+//        txtuser.setText(null);
+//        txtpass.setText(null);  
+//    }
+    
+    public void Simpan(){
+        String id = txtidApoteker.getText();
+        String nama = txtnamaApoteker.getText();
+        String jenisKelamin = txtjenisKelamin.getSelectedItem().toString();
+        String alamat = txtAlamat.getText();
+        String notelp = txtnoTelepon.getText();
+        try{
+            Statement state  = Koneksi.getConnection().createStatement();
+            state.executeUpdate("INSERT INTO tb_apoteker VALUES ('"+id+"','"+nama+"','"+alamat+"','"+jenisKelamin+"','"+notelp+"')");
+            JOptionPane.showMessageDialog(this, "Data Berhasil Disimpan !");
+            state.close();
+            this.dispose();
+//            MasterDataApoteker mda= new MasterDataApoteker();
+//            mda.setVisible(true);
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(this, "Data Gagal Disimpan !");
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,21 +60,21 @@ public class PopApoteker extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        idApoteker = new javax.swing.JTextField();
+        txtidApoteker = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        namApoteker = new javax.swing.JTextField();
+        txtnamaApoteker = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         getIDApoteker = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
-        noTelepon = new javax.swing.JTextField();
+        txtnoTelepon = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnSimpan = new javax.swing.JButton();
+        btnBatal = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
-        jenisKelamin = new javax.swing.JComboBox<>();
+        txtjenisKelamin = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextAreaAlamat = new javax.swing.JTextArea();
+        txtAlamat = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -56,7 +88,7 @@ public class PopApoteker extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Nama Apoteker");
 
-        namApoteker.setToolTipText("Nama Obat");
+        txtnamaApoteker.setToolTipText("Nama Obat");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -74,25 +106,40 @@ public class PopApoteker extends javax.swing.JFrame {
                 getIDApotekerMouseClicked(evt);
             }
         });
+        getIDApoteker.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getIDApotekerActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 2, 24)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Form Input Supplier");
+        jLabel5.setText("Form Input Apoteker");
 
         jLabel7.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("No Telepon");
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/save.png"))); // NOI18N
-        jButton1.setText("Simpan");
+        btnSimpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/save.png"))); // NOI18N
+        btnSimpan.setText("Simpan");
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Batal");
+        btnBatal.setText("Batal");
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatalActionPerformed(evt);
+            }
+        });
 
-        jenisKelamin.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Laki-laki", "Perempuan" }));
+        txtjenisKelamin.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Laki-laki", "Perempuan" }));
 
-        jTextAreaAlamat.setColumns(20);
-        jTextAreaAlamat.setRows(5);
-        jScrollPane1.setViewportView(jTextAreaAlamat);
+        txtAlamat.setColumns(20);
+        txtAlamat.setRows(5);
+        jScrollPane1.setViewportView(txtAlamat);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -112,20 +159,20 @@ public class PopApoteker extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(idApoteker, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                        .addComponent(txtidApoteker, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(getIDApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(namApoteker)
+                    .addComponent(txtnamaApoteker)
                     .addComponent(jScrollPane1)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(2, 2, 2)
                         .addComponent(jLabel5))
-                    .addComponent(jenisKelamin, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtjenisKelamin, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(btnSimpan)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(noTelepon))
+                        .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtnoTelepon))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -138,16 +185,16 @@ public class PopApoteker extends javax.swing.JFrame {
                 .addGap(24, 24, 24)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(idApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtidApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(getIDApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(namApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtnamaApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jenisKelamin, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtjenisKelamin, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(24, 24, 24)
@@ -158,12 +205,12 @@ public class PopApoteker extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(noTelepon, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtnoTelepon, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
                 .addGap(27, 27, 27)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(45, 45, 45))
         );
 
@@ -185,6 +232,35 @@ public class PopApoteker extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_getIDApotekerMouseClicked
 
+    private void getIDApotekerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getIDApotekerActionPerformed
+        Autonomor();
+    }//GEN-LAST:event_getIDApotekerActionPerformed
+
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        // TODO add your handling code here:
+        Simpan();
+        //Reset();
+       //Datatabel();
+    }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
+         System.exit(0);
+    }//GEN-LAST:event_btnBatalActionPerformed
+
+    private void Autonomor(){
+        String sql = "SELECT max(id_apoteker) FROM tb_apoteker";
+        try{
+            Statement state  = Koneksi.getConnection().createStatement();
+            Rs = state.executeQuery(sql);
+            while (Rs.next()){
+                int a = Rs.getInt(1);
+                txtidApoteker.setText("APT-00"+ Integer.toString(a+1));
+            }
+        }catch (Exception e){
+            System.out.println(""+ e.getMessage());
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -222,10 +298,9 @@ public class PopApoteker extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBatal;
+    private javax.swing.JButton btnSimpan;
     private javax.swing.JButton getIDApoteker;
-    private javax.swing.JTextField idApoteker;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -235,9 +310,10 @@ public class PopApoteker extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextArea jTextAreaAlamat;
-    private javax.swing.JComboBox<String> jenisKelamin;
-    private javax.swing.JTextField namApoteker;
-    private javax.swing.JTextField noTelepon;
+    private javax.swing.JTextArea txtAlamat;
+    private javax.swing.JTextField txtidApoteker;
+    private javax.swing.JComboBox<String> txtjenisKelamin;
+    private javax.swing.JTextField txtnamaApoteker;
+    private javax.swing.JTextField txtnoTelepon;
     // End of variables declaration//GEN-END:variables
 }

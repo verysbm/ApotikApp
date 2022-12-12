@@ -4,9 +4,11 @@
  */
 package Koneksi;
 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
 
 /**
  *
@@ -15,7 +17,7 @@ import java.sql.SQLException;
 public class Koneksi {
     public static Connection getConnection() {
         Connection conn = null;
-        String url = "jdbc:mysql://localhost:3306/apotik";
+        String url = "jdbc:mysql://localhost:3306/db_apotik";
         String user = "root";
         String password = "";
         try {
@@ -24,14 +26,5 @@ public class Koneksi {
             System.out.println(e);
         }
         return conn;
-    }
-
-    public static void main(String[] args) {
-        try {
-            Connection c = Koneksi.getConnection();
-            System.out.println(String.format("Connected to database %s " + "successfully.", c.getCatalog()));
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
     }
 }

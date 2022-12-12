@@ -59,23 +59,23 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="idApoteker" pref="201" max="32767" attributes="0"/>
+                          <Component id="txtidApoteker" pref="201" max="32767" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="getIDApoteker" min="-2" pref="85" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="namApoteker" alignment="0" max="32767" attributes="0"/>
+                      <Component id="txtnamaApoteker" alignment="0" max="32767" attributes="0"/>
                       <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                           <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="jenisKelamin" alignment="0" min="-2" pref="210" max="-2" attributes="0"/>
+                      <Component id="txtjenisKelamin" alignment="0" min="-2" pref="210" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnSimpan" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="jButton2" min="-2" pref="86" max="-2" attributes="0"/>
+                          <Component id="btnBatal" min="-2" pref="86" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="noTelepon" alignment="0" max="32767" attributes="0"/>
+                      <Component id="txtnoTelepon" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace pref="17" max="32767" attributes="0"/>
               </Group>
@@ -91,18 +91,18 @@
                   <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="idApoteker" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
+                      <Component id="txtidApoteker" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                       <Component id="getIDApoteker" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="namApoteker" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
+                      <Component id="txtnamaApoteker" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jenisKelamin" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
+                      <Component id="txtjenisKelamin" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                   </Group>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
@@ -117,13 +117,13 @@
                       </Group>
                   </Group>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="noTelepon" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
+                      <Component id="txtnoTelepon" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                       <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jButton1" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
-                      <Component id="jButton2" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
+                      <Component id="btnSimpan" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
+                      <Component id="btnBatal" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
               </Group>
@@ -142,7 +142,7 @@
             <Property name="text" type="java.lang.String" value="ID Apoteker"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="idApoteker">
+        <Component class="javax.swing.JTextField" name="txtidApoteker">
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
@@ -155,7 +155,7 @@
             <Property name="text" type="java.lang.String" value="Nama Apoteker"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="namApoteker">
+        <Component class="javax.swing.JTextField" name="txtnamaApoteker">
           <Properties>
             <Property name="toolTipText" type="java.lang.String" value="Nama Obat"/>
           </Properties>
@@ -194,6 +194,7 @@
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="getIDApotekerMouseClicked"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="getIDApotekerActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel5">
@@ -204,10 +205,10 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Form Input Supplier"/>
+            <Property name="text" type="java.lang.String" value="Form Input Apoteker"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="noTelepon">
+        <Component class="javax.swing.JTextField" name="txtnoTelepon">
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel7">
           <Properties>
@@ -220,22 +221,28 @@
             <Property name="text" type="java.lang.String" value="No Telepon"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="btnSimpan">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/Images/save.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Simpan"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimpanActionPerformed"/>
+          </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton2">
+        <Component class="javax.swing.JButton" name="btnBatal">
           <Properties>
             <Property name="text" type="java.lang.String" value="Batal"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBatalActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator1">
         </Component>
-        <Component class="javax.swing.JComboBox" name="jenisKelamin">
+        <Component class="javax.swing.JComboBox" name="txtjenisKelamin">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="2">
@@ -255,7 +262,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTextArea" name="jTextAreaAlamat">
+            <Component class="javax.swing.JTextArea" name="txtAlamat">
               <Properties>
                 <Property name="columns" type="int" value="20"/>
                 <Property name="rows" type="int" value="5"/>
