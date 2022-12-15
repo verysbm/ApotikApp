@@ -11,31 +11,31 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author HP
  */
-public class MasterDataApoteker extends javax.swing.JFrame {
+public class MasterDataDokter extends javax.swing.JFrame {
  ResultSet Rs;
- SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+ SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
     /**
      * Creates new form MainMenu
      */
  
-    public MasterDataApoteker() {
+    public MasterDataDokter() {
         initComponents();
         Datatabel();
         //Full Jframe
         setExtendedState(MAXIMIZED_BOTH);
-        Locale locale=new Locale("id", "ID");
-        Locale.setDefault(locale);  
         getJam();
     }
     
@@ -48,22 +48,27 @@ public class MasterDataApoteker extends javax.swing.JFrame {
     }
     
     public void getRefresh() {
-        txtidApoteker.setText(null);
-        txtnamaApoteker.setText(null);
+        txtidDokter.setText(null);
+        txtnamaDokter.setText(null);
+        txttmpLahir.setText(null);
+        tglLahir.setDateFormatString("");
         txtjenisKelamin.setSelectedItem("Laki-laki");
+        txtAgama.setSelectedItem("Islam");
         txtAlamat.setText(null);
         txtnoTelepon.setText(null);
+        txtJabatan.setText(null);
+        txtnamaDokter.requestFocus();
     }
     
     private void Autonomor(){
-        String sql = "SELECT max(RIGHT(id_apoteker,4)) FROM tb_apoteker ORDER BY id_apoteker DESC";
+        String sql = "SELECT max(RIGHT(id_dokter,4)) FROM tb_dokter ORDER BY id_dokter DESC";
         try{
             Statement state  = Koneksi.getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                                   ResultSet.CONCUR_UPDATABLE);
             Rs = state.executeQuery(sql);
             while (Rs.next()){
                 if(Rs.first() == false){
-                    txtidApoteker.setText("APT0001");
+                    txtidDokter.setText("DKT0001");
                 }else{
                     Rs.last();
                     int auto_id = Rs.getInt(1) + 1;
@@ -73,7 +78,7 @@ public class MasterDataApoteker extends javax.swing.JFrame {
                     for (int j = 0; j < 4 - noLong; j++) {
                         no = "0" + no;
                     }
-                    txtidApoteker.setText("APT"+ no);
+                    txtidDokter.setText("DKT"+ no);
                 }               
             }
             Rs.close();
@@ -86,7 +91,7 @@ public class MasterDataApoteker extends javax.swing.JFrame {
     }
     
     private void refreshTabel() {
-    DefaultTableModel model = (DefaultTableModel)tabelApoteker.getModel();
+    DefaultTableModel model = (DefaultTableModel)tabelDokter.getModel();
     model.setRowCount(0);
     Datatabel();
     }
@@ -123,24 +128,31 @@ public class MasterDataApoteker extends javax.swing.JFrame {
     
     public void Datatabel(){
        DefaultTableModel tabel = new DefaultTableModel();
-       tabel.addColumn("ID Apoteker");
+       tabel.addColumn("ID Dokter");
        tabel.addColumn("Nama");
+       tabel.addColumn("Tmp Lahir");
+       tabel.addColumn("Tgl Lahir");
        tabel.addColumn("Jenis Kelamin");
-       tabel.addColumn("No Telepon");
+       tabel.addColumn("Agama");
        tabel.addColumn("Alamat");
+       tabel.addColumn("No Telepon");
+       tabel.addColumn("Jabatan");
        try{
            Statement state  = Koneksi.getConnection().createStatement();
-           Rs = state.executeQuery("Select * FROM tb_apoteker");
+           Rs = state.executeQuery("Select * FROM tb_dokter");
            while(Rs.next()){
                tabel.addRow(new Object[]{
                    Rs.getString(1),
-                   Rs.getString(2),
-                   Rs.getString(4),
-                   Rs.getString(5),
+                   Rs.getString(2) ,
                    Rs.getString(3),
-                  
+                   Rs.getString(4),
+                   Rs.getString(7),
+                   Rs.getString(6),
+                   Rs.getString(5),
+                   Rs.getString(8),
+                   Rs.getString(9),
                });
-               tabelApoteker.setModel(tabel);
+               tabelDokter.setModel(tabel);
            }
           // tabelApoteker.revalidate();
            //tabelApoteker.fireTableDataChanged();
@@ -154,29 +166,53 @@ public class MasterDataApoteker extends javax.swing.JFrame {
     
     int row=0;
     public void getKlik(){
-        row=tabelApoteker.getSelectedRow();
-        txtidApoteker.setText(tabelApoteker.getValueAt(row, 0).toString());
-        txtnamaApoteker.setText(tabelApoteker.getValueAt(row, 1).toString());
-        //txtjenisKelamin.setSelectedItem(tabelApoteker.getValueAt(row, 4).toString());
-        txtjenisKelamin.setSelectedItem(String.valueOf(tabelApoteker.getValueAt(tabelApoteker.getSelectedRow(), 2)));
-        txtAlamat.setText(tabelApoteker.getValueAt(row, 4).toString());
-        txtnoTelepon.setText(tabelApoteker.getValueAt(row, 3).toString());
+        row=tabelDokter.getSelectedRow();
+        txtidDokter.setText(tabelDokter.getValueAt(row, 0).toString());
+        txtnamaDokter.setText(tabelDokter.getValueAt(row, 1).toString());
+        txttmpLahir.setText(tabelDokter.getValueAt(row, 2).toString());
+        txtjenisKelamin.setSelectedItem(String.valueOf(tabelDokter.getValueAt(tabelDokter.getSelectedRow(), 4)));
         
+        txtAgama.setSelectedItem(String.valueOf(tabelDokter.getValueAt(tabelDokter.getSelectedRow(), 5)));
+        txtAlamat.setText(tabelDokter.getValueAt(row, 6).toString());
+        txtnoTelepon.setText(tabelDokter.getValueAt(row, 7).toString());
+        txtJabatan.setText(tabelDokter.getValueAt(row, 8).toString());
     }
     
+     public static Date AmbilTanggal(JTable table , int kolom){
+        JTable tabelDokter = table;
+        String tgl = String.valueOf(tabelDokter.getValueAt(tabelDokter.getSelectedRow(), kolom));
+        Date tanggal = null;
+        try {
+            tanggal = new SimpleDateFormat("yyyy-MM-dd").parse(tgl);
+        } catch (ParseException ex) {
+             System.out.println(ex);
+        }
+        return tanggal;
+    }
     // Saving data 
     public void Simpan(){
-        String id = txtidApoteker.getText();
-        String nama = txtnamaApoteker.getText();
+        String id = txtidDokter.getText();
+        String nama = txtnamaDokter.getText();
+        String tmpLahir = txttmpLahir.getText();
+        String tgl = String.valueOf(fm.format(tglLahir.getDate()));
         String jenisKelamin = txtjenisKelamin.getSelectedItem().toString();
+        String agama = txtAgama.getSelectedItem().toString();
         String alamat = txtAlamat.getText();
-        String notelp = txtnoTelepon.getText();        
-        if(id.equals("")||nama.equals("")||jenisKelamin.equals("")||alamat.equals("")||notelp.equals("")){
+        String notelp = txtnoTelepon.getText();
+        String jabatan = txtJabatan.getText();         
+        if(id.equals("")||nama.equals("")||agama.equals("")||jenisKelamin.equals("")||alamat.equals("")||notelp.equals("")){
         JOptionPane.showMessageDialog(this, "Lengkapi data anda");
         }else{
             try{
                 Statement state  = Koneksi.getConnection().createStatement();
-                state.executeUpdate("INSERT INTO tb_apoteker VALUES ('"+id+"','"+nama+"','"+alamat+"','"+jenisKelamin+"','"+notelp+"')");
+                state.executeUpdate("INSERT INTO tb_dokter VALUES ('"+id+"','"+nama+"',"
+                        + "'"+tmpLahir+"',"
+                        + "'"+tgl+"',"
+                        + "'"+alamat+"',"
+                        + "'"+agama+"',"
+                        + "'"+jenisKelamin+"',"
+                        + "'"+notelp+"',"
+                        + "'"+jabatan+"')");
                 getRefresh();                
                 JOptionPane.showMessageDialog(this, "Data Berhasil Disimpan !");
                 refreshTabel();
@@ -188,20 +224,29 @@ public class MasterDataApoteker extends javax.swing.JFrame {
             }
         }
     }
+    
     //Update Data
     public void editData(){
-        String id = txtidApoteker.getText();
-        String nama = txtnamaApoteker.getText();
+        String id = txtidDokter.getText();
+        String nama = txtnamaDokter.getText();
+        String tmpLahir = txttmpLahir.getText();
+        String tgl = String.valueOf(fm.format(tglLahir.getDate()));
         String jenisKelamin = txtjenisKelamin.getSelectedItem().toString();
+        String agama = txtAgama.getSelectedItem().toString();
         String alamat = txtAlamat.getText();
         String notelp = txtnoTelepon.getText();
+        String jabatan = txtJabatan.getText();
         try{
             Statement state  = Koneksi.getConnection().createStatement();
-            state.executeUpdate("UPDATE tb_apoteker SET nama_apoteker='"+nama
+            state.executeUpdate("UPDATE tb_dokter SET nama_dokter='"+nama
+                    +"', tempat_lahir='"+tmpLahir
+                    +"', tgl_lahir='"+tgl
                     +"', alamat='"+alamat
-                    +"', jk_apoteker='"+jenisKelamin
-                    +"', tlp_apoteker='"+notelp
-                    +"' WHERE id_apoteker='"+id+"';");
+                    +"', agama='"+agama
+                    +"', jk_dokter='"+jenisKelamin         
+                    +"', tlp_dokter='"+notelp
+                    +"', jabatan_dokter='"+jabatan
+                    +"' WHERE id_dokter='"+id+"';");
             JOptionPane.showMessageDialog(this, "Data Berhasil Diubah !");
             getRefresh();
             refreshTabel();
@@ -211,12 +256,12 @@ public class MasterDataApoteker extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Data Gagal Disimpan !");
         }
     }
-    //Delete Data
-    public void deleteData(){
-        String id = txtidApoteker.getText();
+    
+     public void deleteData(){
+        String id = txtidDokter.getText();
         try {
             Statement state  = Koneksi.getConnection().createStatement();
-            state.executeUpdate("DELETE from tb_apoteker WHERE id_apoteker='"+id+"';");
+            state.executeUpdate("DELETE FROM tb_dokter WHERE id_dokter='"+id+"';");
             JOptionPane.showMessageDialog(this, "Data Berhasil Dihapus !");
             getRefresh();
             refreshTabel();
@@ -237,15 +282,15 @@ public class MasterDataApoteker extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         btnMObat = new javax.swing.JButton();
-        btnMSupplier = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tabelApoteker = new javax.swing.JTable();
-        btnMDokter = new javax.swing.JButton();
-        btnMPasien = new javax.swing.JButton();
+        tabelDokter = new javax.swing.JTable();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         btnTambah = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
@@ -253,10 +298,10 @@ public class MasterDataApoteker extends javax.swing.JFrame {
         Jam = new javax.swing.JLabel();
         Tanggal = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        txtidApoteker = new javax.swing.JTextField();
+        txtidDokter = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         getIDApoteker = new javax.swing.JButton();
-        txtnamaApoteker = new javax.swing.JTextField();
+        txtnamaDokter = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         txtjenisKelamin = new javax.swing.JComboBox<>();
@@ -265,15 +310,16 @@ public class MasterDataApoteker extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         txtnoTelepon = new javax.swing.JTextField();
-        btnCetak = new javax.swing.JButton();
+        txttmpLahir = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        tglLahir = new com.toedter.calendar.JDateChooser();
+        jLabel10 = new javax.swing.JLabel();
+        txtJabatan = new javax.swing.JTextField();
+        txtAgama = new javax.swing.JComboBox<>();
+        jLabel11 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuDashboard = new javax.swing.JMenu();
         jMenuMasterData = new javax.swing.JMenu();
-        itemApoteker = new javax.swing.JMenuItem();
-        itemDokter = new javax.swing.JMenuItem();
-        itemObat = new javax.swing.JMenuItem();
-        itemPasien = new javax.swing.JMenuItem();
-        itemSupplier = new javax.swing.JMenuItem();
         jMenuTransaksi = new javax.swing.JMenu();
         jMenuLaporan = new javax.swing.JMenu();
         jMenuItemPembelian = new javax.swing.JMenuItem();
@@ -296,12 +342,7 @@ public class MasterDataApoteker extends javax.swing.JFrame {
             }
         });
 
-        btnMSupplier.setText("Supplier");
-        btnMSupplier.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMSupplierActionPerformed(evt);
-            }
-        });
+        jButton2.setText("Supplier");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -314,58 +355,59 @@ public class MasterDataApoteker extends javax.swing.JFrame {
         jLabel2.setText("Login As : Admin");
 
         jPanel3.setBackground(new java.awt.Color(0, 184, 148));
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Data"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Dokter"));
 
-        tabelApoteker.setModel(new javax.swing.table.DefaultTableModel(
+        tabelDokter.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID Apoteker", "Nama", "Jenis Kelamin ", "Alamat", "No Telepon"
+                "ID Dokter", "Nama", "Tempat Lahir", "Tgl Lahir", "Jenis Kelamin ", "Agama", "Alamat", "No Telepon", "Jabatan"
             }
-        ));
-        tabelApoteker.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        tabelApoteker.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tabelApotekerMouseClicked(evt);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(tabelApoteker);
-        if (tabelApoteker.getColumnModel().getColumnCount() > 0) {
-            tabelApoteker.getColumnModel().getColumn(0).setResizable(false);
+        tabelDokter.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tabelDokter.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabelDokterMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tabelDokter);
+        if (tabelDokter.getColumnModel().getColumnCount() > 0) {
+            tabelDokter.getColumnModel().getColumn(0).setResizable(false);
         }
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 819, Short.MAX_VALUE)
+            .addGap(0, 759, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 819, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 759, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 345, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE))
         );
 
-        btnMDokter.setText("Dokter");
-        btnMDokter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMDokterActionPerformed(evt);
-            }
-        });
+        jButton4.setBackground(new java.awt.Color(255, 255, 102));
+        jButton4.setText("Dokter");
 
-        btnMPasien.setText("Pasien");
-        btnMPasien.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMPasienActionPerformed(evt);
-            }
-        });
+        jButton5.setText("Pasien");
 
         btnTambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/plus.png"))); // NOI18N
         btnTambah.setText("Tambah");
@@ -389,7 +431,6 @@ public class MasterDataApoteker extends javax.swing.JFrame {
             }
         });
 
-        jButton6.setBackground(new java.awt.Color(255, 255, 102));
         jButton6.setText("Apoteker");
 
         Jam.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
@@ -401,13 +442,13 @@ public class MasterDataApoteker extends javax.swing.JFrame {
         Tanggal.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 102));
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Form Apoteker"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Form Dokter"));
         jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
-        txtidApoteker.setBackground(new java.awt.Color(204, 204, 204));
+        txtidDokter.setBackground(new java.awt.Color(204, 204, 204));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
-        jLabel3.setText("ID Apoteker");
+        jLabel3.setText("ID Dokter");
 
         getIDApoteker.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/reload.png"))); // NOI18N
         getIDApoteker.setToolTipText("Reload");
@@ -418,10 +459,15 @@ public class MasterDataApoteker extends javax.swing.JFrame {
             }
         });
 
-        txtnamaApoteker.setToolTipText("Nama Obat");
+        txtnamaDokter.setToolTipText("Nama Obat");
+        txtnamaDokter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtnamaDokterActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
-        jLabel5.setText("Nama Apoteker");
+        jLabel5.setText("Nama Dokter");
 
         jLabel6.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel6.setText("Jenis Kelamin");
@@ -438,75 +484,109 @@ public class MasterDataApoteker extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel8.setText("No Telepon");
 
+        txttmpLahir.setToolTipText("Nama Obat");
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
+        jLabel9.setText("TTL");
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
+        jLabel10.setText("Jabatan");
+
+        txtAgama.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Islam", "Kristen", "Katholik", "Konghucu", "Hindu", "Budha", "Penganut Kepercayaan" }));
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
+        jLabel11.setText("Agama");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel10)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel9))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(txttmpLahir, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(tglLahir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txtnamaDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtjenisKelamin, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtnoTelepon)
+                    .addComponent(txtJabatan)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtAgama, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(116, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(326, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(getIDApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(21, 21, 21))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel3)
                         .addComponent(jLabel5)
-                        .addComponent(jLabel6)
-                        .addComponent(jLabel7)
-                        .addComponent(jLabel8))
+                        .addComponent(jLabel6))
                     .addGap(18, 18, 18)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                            .addComponent(txtidApoteker, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
-                            .addGap(103, 103, 103))
-                        .addComponent(txtnamaApoteker)
-                        .addComponent(jScrollPane1)
-                        .addComponent(txtnoTelepon)
-                        .addComponent(txtjenisKelamin, 0, 304, Short.MAX_VALUE))
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(txtidDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(116, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(getIDApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(getIDApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtnamaDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtjenisKelamin, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txttmpLahir)
+                            .addComponent(tglLahir, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(10, 10, 10))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(143, 143, 143)
+                        .addComponent(jLabel9)
+                        .addGap(23, 23, 23)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtAgama, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel7)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8)
+                    .addComponent(txtnoTelepon, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(13, 13, 13)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtJabatan, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10))
+                .addContainerGap(44, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel3)
-                        .addComponent(txtidApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtidDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGap(18, 18, 18)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel5)
-                        .addComponent(txtnamaApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel5)
                     .addGap(18, 18, 18)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel6)
-                        .addComponent(txtjenisKelamin, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addGap(24, 24, 24)
-                            .addComponent(jLabel7)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtnoTelepon, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel8))
-                    .addContainerGap()))
+                    .addComponent(jLabel6)
+                    .addContainerGap(336, Short.MAX_VALUE)))
         );
 
-        btnCetak.setText("Print");
-        btnCetak.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCetakActionPerformed(evt);
-            }
-        });
+        txtnamaDokter.getAccessibleContext().setAccessibleDescription("Nama Dokter");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -517,31 +597,16 @@ public class MasterDataApoteker extends javax.swing.JFrame {
                 .addComponent(jSeparator2)
                 .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnTambah)
-                        .addGap(19, 19, 19)
-                        .addComponent(btnEdit)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnHapus)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnCetak)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(12, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addComponent(btnMObat, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnMSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnMDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnMPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -553,40 +618,54 @@ public class MasterDataApoteker extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(30, 30, 30))))
+                        .addGap(421, 421, 421))))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addComponent(btnTambah)
+                        .addGap(320, 320, 320)
+                        .addComponent(btnEdit)
+                        .addGap(27, 27, 27)
+                        .addComponent(btnHapus))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Tanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(Jam, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel1))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnMObat, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnMSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnMDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnMPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(24, 24, 24)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Jam, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(Tanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel1)
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel2)))
+                .addGap(6, 6, 6)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnTambah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnHapus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnCetak))
-                .addGap(42, 42, 42))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnTambah)
+                            .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         jMenuDashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/home.png"))); // NOI18N
@@ -601,47 +680,6 @@ public class MasterDataApoteker extends javax.swing.JFrame {
 
         jMenuMasterData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/archive.png"))); // NOI18N
         jMenuMasterData.setText("Master Data");
-
-        itemApoteker.setText("Apoteker");
-        itemApoteker.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                itemApotekerActionPerformed(evt);
-            }
-        });
-        jMenuMasterData.add(itemApoteker);
-
-        itemDokter.setText("Dokter");
-        itemDokter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                itemDokterActionPerformed(evt);
-            }
-        });
-        jMenuMasterData.add(itemDokter);
-
-        itemObat.setText("Obat");
-        itemObat.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                itemObatActionPerformed(evt);
-            }
-        });
-        jMenuMasterData.add(itemObat);
-
-        itemPasien.setText("Pasien");
-        itemPasien.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                itemPasienActionPerformed(evt);
-            }
-        });
-        jMenuMasterData.add(itemPasien);
-
-        itemSupplier.setText("Supplier");
-        itemSupplier.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                itemSupplierActionPerformed(evt);
-            }
-        });
-        jMenuMasterData.add(itemSupplier);
-
         jMenuBar1.add(jMenuMasterData);
 
         jMenuTransaksi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/dompet.png"))); // NOI18N
@@ -696,11 +734,15 @@ public class MasterDataApoteker extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -725,22 +767,15 @@ public class MasterDataApoteker extends javax.swing.JFrame {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         Simpan();
-//        PopApoteker popApotek= new PopApoteker();
-//        popApotek.setVisible(true);
-//        popApotek.setAlwaysOnTop(rootPaneCheckingEnabled);
-//        refreshTabel();
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnMObatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMObatActionPerformed
         // TODO add your handling code here:
+        
         MasterDataObat mdo = new MasterDataObat();
         mdo.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnMObatActionPerformed
-
-    private void getIDApotekerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getIDApotekerActionPerformed
-        Autonomor();
-    }//GEN-LAST:event_getIDApotekerActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
@@ -752,68 +787,21 @@ public class MasterDataApoteker extends javax.swing.JFrame {
         deleteData();
     }//GEN-LAST:event_btnHapusActionPerformed
 
-    private void tabelApotekerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelApotekerMouseClicked
+    private void tabelDokterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelDokterMouseClicked
+        if(evt.getClickCount() == 1){
+            getKlik();
+            tglLahir.setDate(AmbilTanggal(tabelDokter, 3));
+        }
+        
+    }//GEN-LAST:event_tabelDokterMouseClicked
+
+    private void txtnamaDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnamaDokterActionPerformed
         // TODO add your handling code here:
-        getKlik();
-    }//GEN-LAST:event_tabelApotekerMouseClicked
+    }//GEN-LAST:event_txtnamaDokterActionPerformed
 
-    private void itemApotekerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemApotekerActionPerformed
-        MasterDataApoteker mda = new MasterDataApoteker();
-        mda.setVisible(true);
-    }//GEN-LAST:event_itemApotekerActionPerformed
-
-    private void itemDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemDokterActionPerformed
-        MasterDataDokter mdd = new MasterDataDokter();
-        mdd.setVisible(true);
-    }//GEN-LAST:event_itemDokterActionPerformed
-
-    private void itemObatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemObatActionPerformed
-        MasterDataObat mdo = new MasterDataObat();
-        mdo.setVisible(true);
-    }//GEN-LAST:event_itemObatActionPerformed
-
-    private void itemPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemPasienActionPerformed
-        MasterDataPasien mdp = new MasterDataPasien();
-        mdp.setVisible(true);
-    }//GEN-LAST:event_itemPasienActionPerformed
-
-    private void itemSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSupplierActionPerformed
-        MasterDataSupplier mds = new MasterDataSupplier();
-        mds.setVisible(true);
-    }//GEN-LAST:event_itemSupplierActionPerformed
-
-    private void btnMSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMSupplierActionPerformed
-        MasterDataSupplier mds = new MasterDataSupplier();
-        mds.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnMSupplierActionPerformed
-
-    private void btnMDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMDokterActionPerformed
-        MasterDataDokter mdd = new MasterDataDokter();
-        mdd.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnMDokterActionPerformed
-
-    private void btnMPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMPasienActionPerformed
-        MasterDataPasien mdp = new MasterDataPasien();
-        mdp.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnMPasienActionPerformed
-
-    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
-        try{
-           
-//            HashMap data=new HashMap();
-//            String buatLaporan=("./src/POSWorkshop/laporan/LapDataBarangMasuk.jasper");
-//            Jaspe
-////            JasperPrint cetak_laporan = JasperFillManager.fillReport(buatLaporan, data, conn);
-////            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
-//            LaporanData.setTitle("Laporan Data Barang Masuk");
-//            LaporanData.setVisible(true);
-        }catch(Exception e){
-            javax.swing.JOptionPane.showMessageDialog(rootPane, "Gagal Menampilkan Laporan");
-        } 
-    }//GEN-LAST:event_btnCetakActionPerformed
+    private void getIDApotekerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getIDApotekerActionPerformed
+        Autonomor();
+    }//GEN-LAST:event_getIDApotekerActionPerformed
 
     /**
      * @param args the command line arguments
@@ -832,21 +820,35 @@ public class MasterDataApoteker extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MasterDataApoteker.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MasterDataDokter.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MasterDataApoteker.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MasterDataDokter.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MasterDataApoteker.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MasterDataDokter.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MasterDataApoteker.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MasterDataDokter.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-       
-       
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MasterDataApoteker().setVisible(true);
+                new MasterDataDokter().setVisible(true);
             }
         });
     }
@@ -854,28 +856,25 @@ public class MasterDataApoteker extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Jam;
     private javax.swing.JLabel Tanggal;
-    private javax.swing.JButton btnCetak;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
-    private javax.swing.JButton btnMDokter;
     private javax.swing.JButton btnMObat;
-    private javax.swing.JButton btnMPasien;
-    private javax.swing.JButton btnMSupplier;
     private javax.swing.JButton btnTambah;
     private javax.swing.JButton getIDApoteker;
-    private javax.swing.JMenuItem itemApoteker;
-    private javax.swing.JMenuItem itemDokter;
-    private javax.swing.JMenuItem itemObat;
-    private javax.swing.JMenuItem itemPasien;
-    private javax.swing.JMenuItem itemSupplier;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuDashboard;
@@ -895,12 +894,16 @@ public class MasterDataApoteker extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTable tabelApoteker;
+    private javax.swing.JTable tabelDokter;
+    private com.toedter.calendar.JDateChooser tglLahir;
+    private javax.swing.JComboBox<String> txtAgama;
     private javax.swing.JTextArea txtAlamat;
-    private javax.swing.JTextField txtidApoteker;
+    private javax.swing.JTextField txtJabatan;
+    private javax.swing.JTextField txtidDokter;
     private javax.swing.JComboBox<String> txtjenisKelamin;
-    private javax.swing.JTextField txtnamaApoteker;
+    private javax.swing.JTextField txtnamaDokter;
     private javax.swing.JTextField txtnoTelepon;
+    private javax.swing.JTextField txttmpLahir;
     // End of variables declaration//GEN-END:variables
 
    
