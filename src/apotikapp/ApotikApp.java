@@ -5,6 +5,7 @@
 package apotikapp;
 
 import Koneksi.Koneksi;
+import com.apotikapp.views.Login;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -18,12 +19,8 @@ public class ApotikApp {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        try {
-            Connection c = Koneksi.getConnection();
-            System.out.println(String.format("Connected to database %s " + "successfully.", c.getCatalog()));
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
+        Login lg= new Login();
+        lg.setVisible(true);
     }
     
 }

@@ -359,7 +359,7 @@ public class MasterDataPasien extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID Dokter", "Nama", "Tempat Lahir", "Tgl Lahir", "Jenis Kelamin ", "Agama", "Alamat", "No Telepon", "Jabatan"
+                "ID Pasien", "Nama", "Tempat Lahir", "Tgl Lahir", "Jenis Kelamin ", "Agama", "Alamat", "No Telepon", "Jabatan"
             }
         ) {
             boolean[] canEdit = new boolean [] {
