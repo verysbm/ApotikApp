@@ -8,6 +8,7 @@ package Koneksi;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 
 /**
@@ -23,7 +24,8 @@ public class Koneksi {
         try {
             conn = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
-            System.out.println(e);
+           JOptionPane.showMessageDialog(null, "Tidak ada koneksi yang terbuka atau salah konfigurasi database.");
+           System.exit(0);
         }
         return conn;
     }
