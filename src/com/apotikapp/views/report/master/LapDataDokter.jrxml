@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d9323acf-956a-4926-a275-907605a6be44">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Heading 1" fontSize="16" isBold="true"/>
+	<queryString language="SQL">
+		<![CDATA[Select * From tb_dokter]]>
+	</queryString>
+	<field name="id_dokter" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_dokter" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tempat_lahir" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tgl_lahir" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="alamat" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="agama" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jk_dokter" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tlp_dokter" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jabatan_dokter" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="69" splitType="Stretch">
+			<staticText>
+				<reportElement x="263" y="40" width="250" height="29" uuid="f3b52bc6-0fcb-46f7-9be4-c59e38726de5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Surakarta, Jawa Tengah
+Telpon 02180764618
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="193" y="0" width="389" height="40" uuid="3d45539b-b087-4763-9bc5-c9e04ca642b5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APOTEK KLINIK BERSAMA]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="5" width="802" height="30" backcolor="#CCFFCC" uuid="6a4935c9-b484-44b8-8f8b-8a99508275ea"/>
+				<box>
+					<pen lineColor="#66FF66"/>
+					<topPen lineColor="#66FF66"/>
+					<leftPen lineColor="#66FF66"/>
+					<bottomPen lineColor="#66FF66"/>
+					<rightPen lineColor="#66FF66"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Laporan Data " Dokter " ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="31" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="802" height="1" uuid="077cd7aa-18fb-4e57-8f98-23a27eedacb7"/>
+				<graphicElement>
+					<pen lineStyle="Double"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="15" y="8" width="72" height="20" uuid="88a35c87-3892-45b0-8404-bb0f0c8e0133"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[ID Dokter]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="89" y="8" width="105" height="20" uuid="d0a35950-285b-4dc8-a935-6338294a76ff"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Nama]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="193" y="8" width="125" height="20" uuid="51a5de3f-779e-4586-bb80-082cf1186ef4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[TTL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="318" y="8" width="83" height="20" uuid="26bb085b-0bb8-4de8-9571-584b2e026a04"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Jenis Kelamin]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="401" y="8" width="100" height="20" uuid="2968a8dc-c56d-4aef-83da-c1cbfd3bb880"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Agama]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="501" y="8" width="100" height="20" uuid="bf892311-1148-4867-a1a1-8c1c1d07c37c"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Alamat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="602" y="8" width="100" height="20" uuid="bf7e5f17-00b9-42f7-8f7b-11de07398349"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[No.Telp]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="702" y="8" width="100" height="20" uuid="6b9cace4-1c62-41ae-b0e4-084f81fba1e0"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Jabatan]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="28" width="802" height="1" uuid="da983160-2517-4af6-a981-ad3cf61df3fc"/>
+				<graphicElement>
+					<pen lineStyle="Double"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Stretch">
+			<textField>
+				<reportElement x="89" y="3" width="105" height="20" uuid="59fb1023-7445-4e7b-b3fe-900a5bc45171"/>
+				<textFieldExpression><![CDATA[$F{nama_dokter}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="194" y="3" width="124" height="20" uuid="b32d35eb-69e4-4227-a29a-7eaf009d2daa"/>
+				<textFieldExpression><![CDATA[$F{tempat_lahir}+','+$F{tgl_lahir}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="318" y="3" width="83" height="20" uuid="50cc1fd8-a4a8-4f40-bc13-d66dd78625db"/>
+				<textFieldExpression><![CDATA[$F{jk_dokter}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="401" y="3" width="100" height="20" uuid="d59439b0-f760-48fe-8a51-3f4c74f4f6df"/>
+				<textFieldExpression><![CDATA[$F{agama}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="501" y="3" width="100" height="20" uuid="f034cf29-61b4-4a23-aaf6-4abeb39cffee"/>
+				<textFieldExpression><![CDATA[$F{alamat}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="602" y="3" width="100" height="20" uuid="351b4c19-367d-4539-8efc-209d74aea1da"/>
+				<textFieldExpression><![CDATA[$F{tlp_dokter}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="702" y="3" width="100" height="20" uuid="05578086-6394-4004-9e61-1e48140b057b"/>
+				<textFieldExpression><![CDATA[$F{jabatan_dokter}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="3" width="72" height="20" uuid="62b2ae87-593a-4478-9ef2-6e19efd5145b"/>
+				<textFieldExpression><![CDATA[$F{id_dokter}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="132" splitType="Stretch">
+			<staticText>
+				<reportElement x="631" y="11" width="58" height="20" uuid="cc4a97c8-2652-42ca-9abc-f889503550bb"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Surakarta,]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="689" y="11" width="113" height="20" uuid="d21ca6a4-97f1-427c-8fbe-51eda98c95e2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="631" y="107" width="172" height="1" uuid="2e06ac3e-2da0-4e88-9b78-b9f2b6b64f09"/>
+			</line>
+		</band>
+	</columnFooter>
+</jasperReport>

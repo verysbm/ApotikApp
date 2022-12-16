@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" language="groovy" printOrder="Horizontal" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d71f4619-0f8f-4a19-a79e-b8e53979e056">
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="201"/>
+	<property name="ireport.zoom" value="1.366026910730141"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<queryString>
-		<![CDATA[SELECT * FROM tb_apoteker]]>
+		<![CDATA[SELECT * FROM tb_obat]]>
 	</queryString>
-	<field name="id_apoteker" class="java.lang.String">
+	<field name="id_obat" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="nama_apoteker" class="java.lang.String">
+	<field name="nama_obat" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="alamat" class="java.lang.String">
+	<field name="jenis_obat" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="jk_apoteker" class="java.lang.String">
+	<field name="dosis" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="tlp_apoteker" class="java.lang.String">
+	<field name="harga_beli" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="harga_jual" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="stok" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<background>
@@ -27,17 +33,17 @@
 	<title>
 		<band height="100" splitType="Stretch">
 			<image isLazy="true">
-				<reportElement x="65" y="11" width="99" height="79" uuid="0300010b-fc82-45e2-b9ef-ffe0ba3a0d70"/>
+				<reportElement x="30" y="11" width="99" height="79" uuid="0300010b-fc82-45e2-b9ef-ffe0ba3a0d70"/>
 			</image>
 			<staticText>
-				<reportElement x="189" y="11" width="250" height="27" uuid="57a4a925-3e87-4b4d-8e3f-969261b75bd7"/>
+				<reportElement x="154" y="11" width="250" height="27" uuid="57a4a925-3e87-4b4d-8e3f-969261b75bd7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[APOTEK KLINIK BERSAMA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="189" y="38" width="250" height="48" uuid="9b6fd27d-b7b5-4cd6-8e25-1b6a4f476134"/>
+				<reportElement x="154" y="38" width="250" height="48" uuid="9b6fd27d-b7b5-4cd6-8e25-1b6a4f476134"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Surakarta, Jawa Tengah
 Telpon 02180764618
@@ -59,46 +65,39 @@ Telpon 02180764618
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Laporan Data " Apoteker " ]]></text>
+				<text><![CDATA[Laporan Data " Obat " ]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band height="35" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="92" height="20" uuid="16282fbc-294e-43fa-80b7-527a3b00a29b"/>
+				<reportElement x="0" y="0" width="70" height="20" uuid="16282fbc-294e-43fa-80b7-527a3b00a29b"/>
 				<textElement verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
+					<font size="12" isBold="true" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[ID Apoteker]]></text>
+				<text><![CDATA[ID Obat]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="92" y="0" width="116" height="20" uuid="fc44cdc6-7faf-43be-90fb-d012defe3a00"/>
+				<reportElement x="70" y="1" width="102" height="20" uuid="fc44cdc6-7faf-43be-90fb-d012defe3a00"/>
 				<textElement verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
+					<font size="12" isBold="true" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[Nama Apoteker]]></text>
+				<text><![CDATA[Nama Obat]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="208" y="1" width="100" height="20" uuid="f553aace-7116-4caa-90e4-5150314b3f6c"/>
+				<reportElement x="308" y="1" width="96" height="20" uuid="85dadd00-d503-4cc2-848d-5155a15b1ada"/>
 				<textElement verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
+					<font size="12" isBold="true" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[Jenis Kelamin]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="308" y="1" width="152" height="20" uuid="85dadd00-d503-4cc2-848d-5155a15b1ada"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Alamat]]></text>
+				<text><![CDATA[Harga Beli]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="460" y="1" width="92" height="20" uuid="0e9fd38a-f3af-49bc-a62e-9d90772bfe49"/>
 				<textElement verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
+					<font size="12" isBold="true" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[No Telepon]]></text>
+				<text><![CDATA[Harga Jual]]></text>
 			</staticText>
 			<line>
 				<reportElement x="0" y="24" width="555" height="1" uuid="de5a120e-6c1a-408b-b9bf-6783c251b4ca"/>
@@ -106,44 +105,79 @@ Telpon 02180764618
 			<line>
 				<reportElement x="0" y="1" width="555" height="1" uuid="323af6d8-dd83-4d4a-83f8-550a8682f6a2"/>
 			</line>
+			<staticText>
+				<reportElement x="172" y="4" width="80" height="20" uuid="ef9aca7c-e017-4592-8611-a10637abcbf3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Jenis Obat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="404" y="2" width="56" height="20" uuid="fe3781b0-92f8-45aa-a467-d340462267b4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Stok]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="252" y="4" width="51" height="20" uuid="54a84273-68bb-4c93-9eaf-de05de3573d5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Dosis]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="25" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="92" height="20" uuid="e3bc2c82-cb40-43d0-908f-1d56c15c6039"/>
+				<reportElement x="0" y="0" width="70" height="20" uuid="e3bc2c82-cb40-43d0-908f-1d56c15c6039"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{id_apoteker}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{id_obat}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="92" y="0" width="116" height="20" uuid="82037a28-f256-42f4-8483-fa71a23a1b68"/>
+				<reportElement x="70" y="0" width="102" height="20" uuid="82037a28-f256-42f4-8483-fa71a23a1b68"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{nama_apoteker}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nama_obat}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="208" y="0" width="100" height="20" uuid="0295c1ec-e19a-4b5f-8d33-dea60e7444b2"/>
+				<reportElement x="308" y="0" width="96" height="20" uuid="d1b5895a-b10a-47ed-b911-e31ca10af976"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{jk_apoteker}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="308" y="0" width="152" height="20" uuid="d1b5895a-b10a-47ed-b911-e31ca10af976"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{alamat}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{harga_beli}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="460" y="0" width="92" height="20" uuid="81144bc2-ae6b-4a34-8f09-3dd5a7ff1d02"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tlp_apoteker}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{harga_jual}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="172" y="0" width="80" height="20" uuid="efbfb7a0-d7e9-4e8c-a699-bb5453695ea2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{jenis_obat}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="0" width="51" height="20" uuid="e9febcd8-3cc4-4283-bf59-0a1f5dd8b255"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dosis}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="404" y="0" width="56" height="20" uuid="99915342-159a-4057-a665-87eac686f372"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{stok}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" language="groovy" printOrder="Horizontal" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d71f4619-0f8f-4a19-a79e-b8e53979e056">
+	<property name="ireport.zoom" value="0.8481952367449697"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT * FROM tb_supplier]]>
+	</queryString>
+	<field name="id_supplier" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_supplier" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="alamat" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="telp_supplier" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="100" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="46" y="11" width="99" height="79" uuid="0300010b-fc82-45e2-b9ef-ffe0ba3a0d70"/>
+			</image>
+			<staticText>
+				<reportElement x="170" y="11" width="250" height="27" uuid="57a4a925-3e87-4b4d-8e3f-969261b75bd7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APOTEK KLINIK BERSAMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="38" width="250" height="48" uuid="9b6fd27d-b7b5-4cd6-8e25-1b6a4f476134"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Surakarta, Jawa Tengah
+Telpon 02180764618
+]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="30">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCFFCC" uuid="907a4325-fc67-478e-bd08-ed01ccf25c7f"/>
+				<box>
+					<pen lineColor="#66FF66"/>
+					<topPen lineColor="#66FF66"/>
+					<leftPen lineColor="#66FF66"/>
+					<bottomPen lineColor="#66FF66"/>
+					<rightPen lineColor="#66FF66"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Laporan Data " Supplier " ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="92" height="20" uuid="16282fbc-294e-43fa-80b7-527a3b00a29b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[ID Apoteker]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="0" width="146" height="20" uuid="fc44cdc6-7faf-43be-90fb-d012defe3a00"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Nama Apoteker]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="238" y="1" width="222" height="20" uuid="85dadd00-d503-4cc2-848d-5155a15b1ada"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Alamat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="1" width="92" height="20" uuid="0e9fd38a-f3af-49bc-a62e-9d90772bfe49"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[No Telepon]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="24" width="555" height="1" uuid="de5a120e-6c1a-408b-b9bf-6783c251b4ca"/>
+			</line>
+			<line>
+				<reportElement x="0" y="1" width="555" height="1" uuid="323af6d8-dd83-4d4a-83f8-550a8682f6a2"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="92" height="20" uuid="e3bc2c82-cb40-43d0-908f-1d56c15c6039"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_supplier}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="92" y="0" width="146" height="20" uuid="82037a28-f256-42f4-8483-fa71a23a1b68"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nama_supplier}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="238" y="0" width="222" height="20" uuid="d1b5895a-b10a-47ed-b911-e31ca10af976"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{alamat}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="0" width="92" height="20" uuid="81144bc2-ae6b-4a34-8f09-3dd5a7ff1d02"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{telp_supplier}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="100" splitType="Stretch">
+			<staticText>
+				<reportElement x="381" y="2" width="58" height="20" uuid="2c80fa3e-6162-42dd-9fc5-a68efbdb827c"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Surakarta,]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="439" y="2" width="113" height="20" uuid="8123eedc-2baf-436f-8053-8cb1b6833535"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="381" y="77" width="171" height="1" uuid="09f1e2d4-2c9e-4976-a058-8279cf136b3e"/>
+			</line>
+		</band>
+	</columnFooter>
+</jasperReport>
