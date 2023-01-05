@@ -16,17 +16,30 @@ import javax.swing.JOptionPane;
  * @author recap
  */
 public class Koneksi {
-    public static Connection getConnection() {
+    public Connection conn;
+    
+    public static Connection getConnection() throws ClassNotFoundException  {
         Connection conn = null;
-        String url = "jdbc:mysql://localhost:3306/db_apotik";
-        String user = "root";
-        String password = "";
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String url = "jdbc:mysql://localhost:3306/db_apotik";
+            String user = "root";
+            String password = "";
             conn = DriverManager.getConnection(url, user, password);
+            return conn;
         } catch (SQLException e) {
            JOptionPane.showMessageDialog(null, "Tidak ada koneksi yang terbuka atau salah konfigurasi database.");
-           System.exit(0);
-        }
-        return conn;
+           return null;
+        }    
     }
+    
+    
+    public void closekoneksi() throws SQLException{
+        try{
+            if(conn != null){
+                System.out.print("Tutup Koneksi\n");
+            }
+        }catch(Exception ex){
+        }
+    } 
 }
