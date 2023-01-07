@@ -13,15 +13,14 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author HP
  */
-public class DataObat extends javax.swing.JFrame {
+public class DataDetailResep extends javax.swing.JFrame {
     ResultSet Rs;
-    PopPembelian popBeli = null;
-    PopResep popResep =null;
+    TransaksiResep trxResep = null;
     
     /**
      * Creates new form DataObat
      */
-    public DataObat() {
+    public DataDetailResep() {
         initComponents();
         Datatabel();
                //setLocationRelativeTo(this);
@@ -29,28 +28,45 @@ public class DataObat extends javax.swing.JFrame {
 
     public void Datatabel(){
        DefaultTableModel tabel = new DefaultTableModel();
-       tabel.addColumn("ID Obat");
-       tabel.addColumn("Nama Obat");
-       tabel.addColumn("Jenis Obat");
-       tabel.addColumn("Dosis");
-       tabel.addColumn("Harga Beli");
-       tabel.addColumn("Stok");
-       tabel.addColumn("Harga Jual");
+       tabel.addColumn("ID Pasien");
+       tabel.addColumn("Nama");
+       tabel.addColumn("Tmp Lahir");
+       tabel.addColumn("Tgl Lahir");
+       tabel.addColumn("Jenis Kelamin");
+    
+        
+       String Ids ="RSP0004";
        try{
            Statement state  = Koneksi.getConnection().createStatement();
-           Rs = state.executeQuery("Select * FROM tb_obat");
+           Rs = state.executeQuery("SELECT\n" +
+                                    "	tb_resep_detail.id,\n" +
+                                    "	tb_resep_detail.id_resep,\n" +
+                                    "	tb_resep.tgl_resep,\n" +
+                                    "	tb_pasien.nama_pasien AS pasien,\n" +
+                                    "	tb_obat.nama_obat AS obat,\n" +
+                                    "	tb_resep_detail.qty,\n" +
+                                    "	tb_resep_detail.kode_racik,\n" +
+                                    "	tb_dokter.nama_dokter AS dokter \n" +
+                                    "FROM\n" +
+                                    "	tb_resep_detail\n" +
+                                    "	JOIN tb_resep ON tb_resep_detail.id_resep = tb_resep.id_resep\n" +
+                                    "	JOIN tb_dokter ON tb_dokter.id_dokter = tb_resep.id_dokter\n" +
+                                    "	JOIN tb_obat ON tb_resep_detail.id_obat = tb_obat.id_obat\n" +
+                                    "	JOIN tb_pasien ON tb_pasien.id_pasien = tb_resep.id_pasien \n" +
+                                    "WHERE tb_resep.id_resep ='RSP0001'");
            while(Rs.next()){
                tabel.addRow(new Object[]{
                    Rs.getString(1),
-                   Rs.getString(2),
+                   Rs.getString(2) ,
                    Rs.getString(3),
-                   Rs.getString(4),
+                   Rs.getString(4),                                                                  
                    Rs.getString(5),
-                   Rs.getString(7),
-                   Rs.getString(6),
+
                });
-               tabelObat.setModel(tabel);
+               tabelPasien.setModel(tabel);
            }
+          // tabelApoteker.revalidate();
+           //tabelApoteker.fireTableDataChanged();
            state.close();
            Rs.close();
        }
@@ -59,28 +75,12 @@ public class DataObat extends javax.swing.JFrame {
        }
     }
     
-    public void getKlik(){
-        int tabelobat = tabelObat.getSelectedRow();
-       if(popBeli != null){  
-        popBeli.idobat = tabelObat.getValueAt(tabelobat, 0).toString();
-        popBeli.namaobat = tabelObat.getValueAt(tabelobat, 1).toString();
-        //popBeli.qty = tabelObat.getValueAt(tabelobat, ).toString();
-        popBeli.jenis = tabelObat.getValueAt(tabelobat, 2).toString();
-        popBeli.hargaobat = tabelObat.getValueAt(tabelobat, 4).toString();
-        popBeli.Itemterpilih();
-        this.dispose(); 
-       }else{
-        popResep.idobat = tabelObat.getValueAt(tabelobat, 0).toString();
-        popResep.namaobat = tabelObat.getValueAt(tabelobat, 1).toString();
-        //popBeli.qty = tabelObat.getValueAt(tabelobat, ).toString();
-        popResep.jenis = tabelObat.getValueAt(tabelobat, 2).toString();
-        popResep.hargaobat = tabelObat.getValueAt(tabelobat, 4).toString();
-        popResep.Itemterpilih();
+        public void getKlik(){
+        int tabelobat = tabelPasien.getSelectedRow();
+        trxResep.idPasien = tabelPasien.getValueAt(tabelobat, 0).toString();
+        trxResep.namaPasien = tabelPasien.getValueAt(tabelobat, 1).toString();
+//        trxResep.Itempilih();
         this.dispose();
-       }
-        
-        
-        
     }
     
     /**
@@ -94,7 +94,7 @@ public class DataObat extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tabelObat = new javax.swing.JTable();
+        tabelPasien = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -103,32 +103,32 @@ public class DataObat extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 184, 148));
 
-        tabelObat.setModel(new javax.swing.table.DefaultTableModel(
+        tabelPasien.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "ID Obat", "Nama Obat", "Alamat Supplier", "No Telepon"
+                "Pasien", "Obat", "Qty", "Kode Racik", "Dokter"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, true, true, true
+                false, true, true, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabelObat.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        tabelObat.addMouseListener(new java.awt.event.MouseAdapter() {
+        tabelPasien.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tabelPasien.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tabelObatMouseClicked(evt);
+                tabelPasienMouseClicked(evt);
             }
         });
-        jScrollPane2.setViewportView(tabelObat);
+        jScrollPane2.setViewportView(tabelPasien);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -141,10 +141,10 @@ public class DataObat extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(43, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addGap(23, 23, 23))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -162,10 +162,10 @@ public class DataObat extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tabelObatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelObatMouseClicked
+    private void tabelPasienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelPasienMouseClicked
         // TODO add your handling code here:
         getKlik();
-    }//GEN-LAST:event_tabelObatMouseClicked
+    }//GEN-LAST:event_tabelPasienMouseClicked
 
     /**
      * @param args the command line arguments
@@ -184,20 +184,23 @@ public class DataObat extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DataObat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataDetailResep.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DataObat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataDetailResep.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DataObat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataDetailResep.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DataObat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataDetailResep.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DataObat().setVisible(true);
+                new DataDetailResep().setVisible(true);
             }
         });
     }
@@ -205,6 +208,6 @@ public class DataObat extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable tabelObat;
+    private javax.swing.JTable tabelPasien;
     // End of variables declaration//GEN-END:variables
 }

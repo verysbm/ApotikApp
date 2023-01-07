@@ -6,7 +6,6 @@ package com.apotikapp.views.transaction;
 
 import com.apotikapp.views.Login;
 import com.apotikapp.views.MainMenu;
-import com.apotikapp.views.master.MasterData;
 
 /**
  *
@@ -267,9 +266,7 @@ public class TransaksiMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuDashboardActionPerformed
 
     private void jMenuMasterDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuMasterDataActionPerformed
-        // TODO add your handling code here:
-        MasterData md=new MasterData();
-        md.setVisible(true);
+    
     }//GEN-LAST:event_jMenuMasterDataActionPerformed
 
     private void jMenuLogoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuLogoutMouseClicked

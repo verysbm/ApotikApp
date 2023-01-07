@@ -7,7 +7,6 @@ package com.apotikapp.views.transaction;
 import Koneksi.Koneksi;
 import com.apotikapp.views.Login;
 import com.apotikapp.views.MainMenu;
-import com.apotikapp.views.master.MasterData;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
@@ -27,13 +26,21 @@ public class TransaksiResep extends javax.swing.JFrame {
 
     ResultSet Rs;
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    String idPasien;
+    String namaPasien;
     /**
      * Creates new form MainMenu
      */
     public TransaksiResep() {
         initComponents();
         setExtendedState(MAXIMIZED_BOTH);
-        Datatabel();
+        
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowActivated(WindowEvent e) {
+                Datatabel();
+            }
+        });
         
         //close aplikasi
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -125,8 +132,8 @@ public class TransaksiResep extends javax.swing.JFrame {
         btnInput = new javax.swing.JButton();
         lblCount = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnDetailResep = new javax.swing.JButton();
+        jbtnEditResep = new javax.swing.JButton();
         btnReload = new javax.swing.JButton();
         btnPrint = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -190,14 +197,19 @@ public class TransaksiResep extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Detail");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnDetailResep.setText("Detail");
+        btnDetailResep.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnDetailResepActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Edit Data");
+        jbtnEditResep.setText("Edit Data");
+        jbtnEditResep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnEditResepActionPerformed(evt);
+            }
+        });
 
         btnReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/reload.png"))); // NOI18N
         btnReload.setText("Refresh");
@@ -227,6 +239,11 @@ public class TransaksiResep extends javax.swing.JFrame {
             }
         ));
         tabelResep.setRowHeight(25);
+        tabelResep.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabelResepMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabelResep);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -262,9 +279,9 @@ public class TransaksiResep extends javax.swing.JFrame {
                                 .addComponent(btnInput, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton1)
+                                .addComponent(jbtnEditResep)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton2)
+                                .addComponent(btnDetailResep)
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -303,8 +320,8 @@ public class TransaksiResep extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jbtnEditResep, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnDetailResep, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -411,9 +428,7 @@ public class TransaksiResep extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuDashboardActionPerformed
 
     private void jMenuMasterDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuMasterDataActionPerformed
-        // TODO add your handling code here:
-        MasterData md=new MasterData();
-        md.setVisible(true);
+       
     }//GEN-LAST:event_jMenuMasterDataActionPerformed
 
     private void jMenuLogoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuLogoutMouseClicked
@@ -427,7 +442,7 @@ public class TransaksiResep extends javax.swing.JFrame {
         try {
             PopResep pop=new PopResep();
             pop.setVisible(true);
-            pop.setAlwaysOnTop(rootPaneCheckingEnabled);
+           // pop.setAlwaysOnTop(rootPaneCheckingEnabled);
             //new PopResep(this, rootPaneCheckingEnabled).setVisible(true);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(TransaksiResep.class.getName()).log(Level.SEVERE, null, ex);
@@ -438,9 +453,16 @@ public class TransaksiResep extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void btnDetailResepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailResepActionPerformed
+       int row =0;
+        row=tabelResep.getSelectedRow();
+        System.out.println(tabelResep.getValueAt(row, 0).toString());
+        
+        DataDetailResep fk = new DataDetailResep();
+        fk.trxResep =this;
+        fk.setVisible(true);
+        fk.setAlwaysOnTop(true);
+    }//GEN-LAST:event_btnDetailResepActionPerformed
 
     private void btnReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReloadActionPerformed
         refreshTabel();
@@ -449,6 +471,37 @@ public class TransaksiResep extends javax.swing.JFrame {
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnPrintActionPerformed
+
+    private void jbtnEditResepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnEditResepActionPerformed
+        int row =0;
+        row=tabelResep.getSelectedRow();
+        System.out.println(tabelResep.getValueAt(row, 0).toString());
+        try {
+            PopResep fk = new PopResep();
+            fk.trxResep =this;
+            fk.setVisible(true);        
+            fk.setAlwaysOnTop(true);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(TransaksiResep.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jbtnEditResepActionPerformed
+
+    int row=0;
+    public void getKlik(){
+        row=tabelResep.getSelectedRow();
+        
+//        tabelResep.setText(tabelResep.getValueAt(row, 0).toString());
+//        tabelResep.setText(tabelResep.getValueAt(row, 1).toString());
+//        //txtjenisKelamin.setSelectedItem(tabelApoteker.getValueAt(row, 4).toString());
+//        tabelResep.setSelectedItem(String.valueOf(tabelResep.getValueAt(tabelResep.getSelectedRow(), 2)));
+//        tabelResep.setText(tabelResep.getValueAt(row, 4).toString());
+//        tabelResep.setText(tabelResep.getValueAt(row, 3).toString());
+        
+    }
+    
+    private void tabelResepMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelResepMouseClicked
+       
+    }//GEN-LAST:event_tabelResepMouseClicked
 
     /**
      * @param args the command line arguments
@@ -489,13 +542,12 @@ public class TransaksiResep extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDetailResep;
     private javax.swing.JButton btnInput;
     private javax.swing.JButton btnMPembelian;
     private javax.swing.JButton btnMPenjualan;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnReload;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
@@ -517,6 +569,7 @@ public class TransaksiResep extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JButton jbtnEditResep;
     private javax.swing.JLabel lblCount;
     private javax.swing.JTable tabelResep;
     // End of variables declaration//GEN-END:variables

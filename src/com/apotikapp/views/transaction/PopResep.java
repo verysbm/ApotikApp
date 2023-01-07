@@ -6,8 +6,6 @@ package com.apotikapp.views.transaction;
 
 import Koneksi.Koneksi;
 import Koneksi.PetugasSession;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -27,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 public class PopResep extends javax.swing.JFrame {
     ResultSet Rs;
     private Object fm;
+    TransaksiResep trxResep= null;
    
     /**
      * Creates new form PopPembelian
@@ -42,10 +40,14 @@ public class PopResep extends javax.swing.JFrame {
         Calendar cal = Calendar.getInstance();  
         txttanggal.setText(dateFormat.format(cal.getTime()));
         TxtEmpty();
+        txtid_selected.setVisible(false);
     }
     
-    public String idobat, namaobat, hargaobat, qty, expired, jenis,idPasien,namaPasien;
+    public String idobat, namaobat, hargaobat, qty, expired, jenis,idPasien,namaPasien, IdResep;
 
+    public String getIdResep(){
+        return IdResep;
+    }
     
     public String getIdObat(){
         return idobat;
@@ -81,6 +83,7 @@ public class PopResep extends javax.swing.JFrame {
         txtidPasien.setText(idPasien);
     }
      
+    
     public void Itemterpilih(){
         DataObat fk = new DataObat();
         fk.popResep = this;
@@ -91,6 +94,44 @@ public class PopResep extends javax.swing.JFrame {
         txtharga.setText(hargaobat);
         txtJenisObat.setSelectedItem(jenis);
         txtqty.setText("1");
+        
+    }
+    
+    public void showResep(){
+        DefaultTableModel tabel = new DefaultTableModel();
+       //tabel.addColumn("No");
+       tabel.addColumn("ID Apoteker");
+       tabel.addColumn("Nama");
+       tabel.addColumn("Jenis Kelamin");
+       tabel.addColumn("No Telepon");
+       tabel.addColumn("Alamat");
+       try{
+           Statement state  = Koneksi.getConnection().createStatement();
+           Rs = state.executeQuery("Select * FROM tb_apoteker");
+           //int number = 1;
+          // String number = String.valueOf(tabelApoteker.getRowCount());
+           while(Rs.next()){
+                
+               tabel.addRow(new Object[]{
+                   //Rs.getString(number),
+                   Rs.getString(1),
+                   Rs.getString(2),
+                   Rs.getString(4),
+                   Rs.getString(5),
+                   Rs.getString(3),
+                 
+               });
+               //++slNo;
+               tabelKeranjang.setModel(tabel);
+           }
+          // tabelApoteker.revalidate();
+           //tabelApoteker.fireTableDataChanged();
+           state.close();
+           Rs.close();
+       }
+       catch(Exception e){
+           System.out.println(e);
+       }
         
     }
     
@@ -193,12 +234,10 @@ public class PopResep extends javax.swing.JFrame {
         String data6 = KodeRacik.getText();
         Integer data7 = total;
                 
-        if(!(data1.equals("")) && !(data2.equals("")) && !(data3.equals("")) && !(data4.equals("")) && !(data5.equals("")) ){
+        if(!(cmbDokter.equals("")) && !(data1.equals("")) && !(data2.equals("")) && !(data3.equals("")) && !(data4.equals("")) && !(data5.equals(""))&& !(data6.equals("")) ){
             Object[] row = { data6,data1, data2, data3, data4, data5, data7}; 
             DefaultTableModel model = (DefaultTableModel) tabelKeranjang.getModel();
             model.addRow(row);
-//            
-            
             autoSum();
                 txtIdObat.setText(null);
                 txtnamaObat.setText(null);
@@ -215,7 +254,7 @@ public class PopResep extends javax.swing.JFrame {
     public void autoSum(){
             int total = 0;
             for (int i =0; i< tabelKeranjang.getRowCount(); i++){
-                   int amount = Integer.parseInt((String)tabelKeranjang.getValueAt(i, 5).toString());
+                   int amount = Integer.parseInt((String)tabelKeranjang.getValueAt(i, 4).toString());
                    total += amount;
             }
             //txtSubTotal.setText(""+total);
@@ -258,29 +297,28 @@ public class PopResep extends javax.swing.JFrame {
         Calendar cal = Calendar.getInstance();
         //tanggal hari ini
         String tglBeli = dateFormat.format(cal.getTime());
-        String noFaktur = txtIdResep.getText();
-        String idSupplier = txtidDokter.getText();
+        
+        String idDokter = txtidDokter.getText();
         String idObat =txtIdObat.getText();
         String idApoteker = PetugasSession.getU_id();
-        String tglFaktur = txttanggal.getText();
+        String tglResep = txttanggal.getText();
         String idResep = AutoIdResep();
+        String idPasien = txtidPasien.getText();
                 
         String id,id_barang, kode;
-        Integer id_barang_masuk = 0, jumlah, stok, not_found, empty = 0;
+        Integer id_barang_masuk = 0, qty, jumlah, stok, not_found, empty = 0;
         
         DefaultTableModel model = (DefaultTableModel) tabelKeranjang.getModel();
         int rowCount = model.getRowCount();
          
-        if(rowCount > 0 && !"".equals(idResep) && !"".equals(noFaktur) && !"".equals(idSupplier) && !"".equals(idApoteker)&& !"".equals(tglFaktur)){
+        if(rowCount > 0 && !"".equals(idResep) && !"".equals(idDokter) && !"".equals(tglResep)){
             try{
-                //masukkan data pada tb_beli
+                //masukkan data pada tb_resep
                 Statement state  = Koneksi.getConnection().createStatement();
-                state.executeUpdate("INSERT INTO tb_beli VALUES ('"+idResep+"','"+noFaktur+"',"
-                        + "'"+idSupplier+"',"
-                        + "'"+idApoteker+"',"
-                        + "'"+tglBeli+"',"
-                        + "'"+tglFaktur+"',"
-                        + "'"+0+"')");
+                state.executeUpdate("INSERT INTO tb_resep VALUES ('"+idResep+"','"+idPasien+"',"
+                        + "'"+idDokter+"',"
+                        + "'"+tglResep+"',"
+                        + "'"+1+"')");
                 
                System.out.print("Berhasil tambah data\n");
                 //getRefresh();                
@@ -292,21 +330,34 @@ public class PopResep extends javax.swing.JFrame {
             catch(Exception e){
                 JOptionPane.showMessageDialog(this, "Data Gagal Disimpan !");
             }
-            //get data dari tabel barang
-            try {
-                Statement state  = Koneksi.getConnection().createStatement();
-                Rs = state.executeQuery("SELECT MAX(id_barang) as max FROM tb_barang");
-                Rs.next();
-                id_barang = Rs.getString("max");
-               //konek.closekoneksi();
-               state.close();
-               System.out.print("Berhasil get data\n");
-            }catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error " + e);
-            }
-            
+                        
             //Loop Data
-            
+            for (int i = 0; i < rowCount; i++) {
+                String kodeRacik = tabelKeranjang.getModel().getValueAt(i, 0).toString();
+                String idResepp = txtIdResep.getText();
+                String Obat = (tabelKeranjang.getModel().getValueAt(i, 1).toString());
+                qty = Integer.parseInt((String) tabelKeranjang.getModel().getValueAt(i, 4));
+                //System.out.println(kodeRacik);
+                //System.out.println(idResepp);
+                //System.out.println(Obat);
+                //System.out.println(qty);
+                    try {
+                       Statement state  = Koneksi.getConnection().createStatement();
+                        state.executeUpdate("INSERT INTO tb_resep_detail(id_resep, id_obat, kode_racik, qty) VALUES "
+                                        + "('" + idResepp + "', "
+                                        + "'" + Obat + "', "
+                                        + "'" + kodeRacik + "', "
+                                        + "'" + qty + "')");
+                        empty = 1;
+                        //System.out.print("Berhasil tambah data\n");
+                        state.close();
+                        this.dispose();
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(null, "Error " + e);
+                    } catch (ClassNotFoundException ex) {
+                    }
+            } 
+            JOptionPane.showMessageDialog(null, "Berhasil menyimpan data transaksi");
             
             
         }else{
@@ -365,10 +416,10 @@ public class PopResep extends javax.swing.JFrame {
         cariPasien = new javax.swing.JLabel();
         txtidPasien = new javax.swing.JTextField();
         KodeRacik = new javax.swing.JTextField();
+        idResepp = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Transaksi Resep");
-        setAlwaysOnTop(true);
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(0, 184, 148));
@@ -425,7 +476,7 @@ public class PopResep extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Kode Racik", "ID Obat", "Nama Obat", "Jenis Obat", "Qty", "Harga"
+                "Kode Racik", "ID Obat", "Nama Obat", "Jenis Obat", "Qty"
             }
         ));
         tabelKeranjang.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -496,6 +547,11 @@ public class PopResep extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jSeparator1))
@@ -543,34 +599,30 @@ public class PopResep extends javax.swing.JFrame {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnSaveTrasaction, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(54, 54, 54)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblIdBeli)
+                            .addComponent(jLabel5))
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(lblLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtIdResep, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(idResepp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(54, 54, 54)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblIdBeli)
-                                    .addComponent(jLabel5))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtIdResep, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(txttanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(txtid_pelanggan, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel7)
-                                        .addGap(13, 13, 13)
-                                        .addComponent(cmbDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel8)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(txtPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(txttanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtid_pelanggan, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addGap(13, 13, 13)
+                                .addComponent(cmbDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cariPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(15, 15, 15)))
@@ -593,7 +645,8 @@ public class PopResep extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtIdResep, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblIdBeli)))
+                            .addComponent(lblIdBeli)
+                            .addComponent(idResepp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cmbDokter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -729,14 +782,17 @@ public class PopResep extends javax.swing.JFrame {
     }//GEN-LAST:event_btnTableEmptyActionPerformed
 
     private void btnDelRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelRowActionPerformed
-        // TODO add your handling code here:
-        int ok = JOptionPane.showConfirmDialog(null, "Anda yakin ingin menghapus baris ini?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION);
-        if(ok==0) {
-            int row = Integer.parseInt(txtid_selected.getText());
+            int row = Integer.parseInt(txtid_selected.getText());    
             DefaultTableModel model = (DefaultTableModel) tabelKeranjang.getModel();
             model.removeRow(row);
             BtnEnabled(false);
-        }
+//        int ok = JOptionPane.showConfirmDialog(null, "Anda yakin ingin menghapus baris ini?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION);
+//        if(ok==0) {
+//            int row = Integer.parseInt(txtid_selected.getText());
+//            DefaultTableModel model = (DefaultTableModel) tabelKeranjang.getModel();
+//            model.removeRow(row);
+//            BtnEnabled(false);
+//        }
     }//GEN-LAST:event_btnDelRowActionPerformed
 
     private void btnSaveTrasactionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveTrasactionActionPerformed
@@ -804,6 +860,7 @@ public class PopResep extends javax.swing.JFrame {
     private javax.swing.JLabel cariObat;
     private javax.swing.JLabel cariPasien;
     private javax.swing.JComboBox<String> cmbDokter;
+    private javax.swing.JTextField idResepp;
     private com.toedter.calendar.JCalendar jCalendar1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

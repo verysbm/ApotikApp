@@ -7,8 +7,6 @@ package com.apotikapp.views.transaction;
 import Koneksi.Koneksi;
 import com.apotikapp.views.Login;
 import com.apotikapp.views.MainMenu;
-import com.apotikapp.views.master.MasterData;
-import com.apotikapp.views.master.PopSupplier;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
@@ -403,8 +401,7 @@ public class TransaksiPembelian extends javax.swing.JFrame {
 
     private void jMenuMasterDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuMasterDataActionPerformed
         // TODO add your handling code here:
-        MasterData md=new MasterData();
-        md.setVisible(true);
+        
     }//GEN-LAST:event_jMenuMasterDataActionPerformed
 
     private void jMenuLogoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuLogoutMouseClicked
