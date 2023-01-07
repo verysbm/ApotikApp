@@ -43,7 +43,7 @@
 				<reportElement x="263" y="40" width="250" height="29" uuid="f3b52bc6-0fcb-46f7-9be4-c59e38726de5"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Surakarta, Jawa Tengah
-Telpon 02180764618
+
 ]]></text>
 			</staticText>
 			<staticText>
@@ -51,7 +51,7 @@ Telpon 02180764618
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="24" isBold="true"/>
 				</textElement>
-				<text><![CDATA[APOTEK KLINIK BERSAMA]]></text>
+				<text><![CDATA[APOTEK SUMBER WARAS]]></text>
 			</staticText>
 		</band>
 	</title>

@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" language="groovy" printOrder="Horizontal" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d71f4619-0f8f-4a19-a79e-b8e53979e056">
-	<property name="ireport.zoom" value="0.8481952367449697"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<queryString>
-		<![CDATA[SELECT * FROM tb_supplier]]>
+		<![CDATA[SELECT * FROM tb_apoteker]]>
 	</queryString>
-	<field name="id_supplier" class="java.lang.String">
+	<field name="id_apoteker" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="nama_supplier" class="java.lang.String">
+	<field name="nama_apoteker" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="alamat" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="telp_supplier" class="java.lang.String">
+	<field name="jk_apoteker" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tlp_apoteker" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<background>
@@ -31,13 +34,13 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16" isBold="true"/>
 				</textElement>
-				<text><![CDATA[APOTEK KLINIK BERSAMA]]></text>
+				<text><![CDATA[APOTEK SUMBER WARAS]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="170" y="38" width="250" height="48" uuid="9b6fd27d-b7b5-4cd6-8e25-1b6a4f476134"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Surakarta, Jawa Tengah
-Telpon 02180764618
+
 ]]></text>
 			</staticText>
 		</band>
@@ -56,14 +59,14 @@ Telpon 02180764618
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Laporan Data " Supplier " ]]></text>
+				<text><![CDATA[Laporan Data " Apoteker " ]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band height="35" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="92" height="20" uuid="16282fbc-294e-43fa-80b7-527a3b00a29b"/>
+				<reportElement x="31" y="0" width="61" height="20" uuid="16282fbc-294e-43fa-80b7-527a3b00a29b"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12" isBold="true" isItalic="true"/>
 				</textElement>
@@ -96,23 +99,30 @@ Telpon 02180764618
 			<line>
 				<reportElement x="0" y="1" width="555" height="1" uuid="323af6d8-dd83-4d4a-83f8-550a8682f6a2"/>
 			</line>
+			<staticText>
+				<reportElement x="0" y="1" width="31" height="20" uuid="98d68d5b-a720-46bd-9e7b-ec4e6fa92c9e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[No]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="25" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="92" height="20" uuid="e3bc2c82-cb40-43d0-908f-1d56c15c6039"/>
+				<reportElement x="31" y="0" width="61" height="20" uuid="e3bc2c82-cb40-43d0-908f-1d56c15c6039"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{id_supplier}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{id_apoteker}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="92" y="0" width="146" height="20" uuid="82037a28-f256-42f4-8483-fa71a23a1b68"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{nama_supplier}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nama_apoteker}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="238" y="0" width="222" height="20" uuid="d1b5895a-b10a-47ed-b911-e31ca10af976"/>
@@ -122,11 +132,16 @@ Telpon 02180764618
 				<textFieldExpression><![CDATA[$F{alamat}]]></textFieldExpression>
 			</textField>
 			<textField>
+				<reportElement x="0" y="0" width="31" height="20" uuid="be552f7a-c2a1-4ef2-9463-b433c08af213"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
 				<reportElement x="460" y="0" width="92" height="20" uuid="81144bc2-ae6b-4a34-8f09-3dd5a7ff1d02"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{telp_supplier}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tlp_apoteker}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

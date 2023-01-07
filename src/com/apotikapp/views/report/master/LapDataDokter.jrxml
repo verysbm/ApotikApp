@@ -51,7 +51,7 @@ Telpon 02180764618
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="24" isBold="true"/>
 				</textElement>
-				<text><![CDATA[APOTEK KLINIK BERSAMA]]></text>
+				<text><![CDATA[APOTEK SUMBER WARAS]]></text>
 			</staticText>
 		</band>
 	</title>

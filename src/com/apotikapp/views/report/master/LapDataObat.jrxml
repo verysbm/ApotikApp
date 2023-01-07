@@ -40,13 +40,12 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16" isBold="true"/>
 				</textElement>
-				<text><![CDATA[APOTEK KLINIK BERSAMA]]></text>
+				<text><![CDATA[APOTEK SUMBER WARAS]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="154" y="38" width="250" height="48" uuid="9b6fd27d-b7b5-4cd6-8e25-1b6a4f476134"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Surakarta, Jawa Tengah
-Telpon 02180764618
 ]]></text>
 			</staticText>
 		</band>
