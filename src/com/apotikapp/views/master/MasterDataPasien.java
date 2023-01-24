@@ -5,20 +5,34 @@
 package com.apotikapp.views.master;
 
 import Koneksi.Koneksi;
+import Koneksi.PetugasSession;
 import com.apotikapp.views.MainMenu;
-import com.apotikapp.views.transaction.TransaksiMenu;
+import com.apotikapp.views.report.ReportMenu;
+import com.apotikapp.views.transaction.TransaksiPembelian;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Locale;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -27,6 +41,7 @@ import javax.swing.table.DefaultTableModel;
 public class MasterDataPasien extends javax.swing.JFrame {
  ResultSet Rs;
  SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
+ PetugasSession PetugasSession = new PetugasSession();
     /**
      * Creates new form MainMenu
      */
@@ -36,7 +51,25 @@ public class MasterDataPasien extends javax.swing.JFrame {
         Datatabel();
         //Full Jframe
         setExtendedState(MAXIMIZED_BOTH);
+        Locale locale=new Locale("id", "ID");
+        Locale.setDefault(locale);  
         getJam();
+        HakAkses();
+        
+           //Keluar aplikasi
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent we)
+                { 
+                    String ObjButtons[] = {"Yes","No"};
+                    int PromptResult = JOptionPane.showOptionDialog(null,"Anda yakin ingin keluar aplikasi?","Aplikasi Apotik",JOptionPane.DEFAULT_OPTION,JOptionPane.WARNING_MESSAGE,null,ObjButtons,ObjButtons[1]);
+                    if(PromptResult==JOptionPane.YES_OPTION)
+                    {
+                        System.exit(0);
+                    }
+                }
+            });
     }
     
     public void getExit(){
@@ -45,6 +78,14 @@ public class MasterDataPasien extends javax.swing.JFrame {
             System.exit(0);
         }if(confirm == JOptionPane.NO_OPTION){   
         } 
+    }
+    
+     public void HakAkses(){
+        String akses = PetugasSession.getU_level();
+        if( akses.equalsIgnoreCase("apoteker")){
+            itemApoteker.setVisible(false);
+            itemUser.setVisible(false);
+        }  
     }
     
     public void getRefresh() {
@@ -99,7 +140,7 @@ public class MasterDataPasien extends javax.swing.JFrame {
     public void getJam() {
         ActionListener taskPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                SimpleDateFormat tgl = new SimpleDateFormat("EEEE-dd-MMM-yyyy");
+                SimpleDateFormat tgl = new SimpleDateFormat("EEEE dd MMMM yyyy");
                 String nol_jam = "";
                 String nol_menit = "";
                 String nol_detik = "";
@@ -320,9 +361,16 @@ public class MasterDataPasien extends javax.swing.JFrame {
         btnMSupplier = new javax.swing.JButton();
         btnMApoteker = new javax.swing.JButton();
         btnMDokter = new javax.swing.JButton();
+        btnCetak = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuDashboard = new javax.swing.JMenu();
         jMenuMasterData = new javax.swing.JMenu();
+        itemApoteker = new javax.swing.JMenuItem();
+        itemDokter = new javax.swing.JMenuItem();
+        itemObat = new javax.swing.JMenuItem();
+        itemPasien = new javax.swing.JMenuItem();
+        itemSupplier = new javax.swing.JMenuItem();
+        itemUser = new javax.swing.JMenuItem();
         jMenuTransaksi = new javax.swing.JMenu();
         jMenuLaporan = new javax.swing.JMenu();
         jMenuItemPembelian = new javax.swing.JMenuItem();
@@ -332,16 +380,18 @@ public class MasterDataPasien extends javax.swing.JFrame {
         jMenuItemSupplierMaster = new javax.swing.JMenuItem();
         jMenuItemDokter = new javax.swing.JMenuItem();
         jMenuItemApoteker = new javax.swing.JMenuItem();
+        jMenuItemPasien = new javax.swing.JMenuItem();
         jMenuLogout = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Master Data Pasien");
 
         jPanel1.setBackground(new java.awt.Color(0, 184, 148));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel1.setText("Apotek Klinik Bersama");
+        jLabel1.setText("Apotek Sumber Waras");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
@@ -371,6 +421,7 @@ public class MasterDataPasien extends javax.swing.JFrame {
             }
         });
         tabelDokter.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tabelDokter.setRowHeight(25);
         tabelDokter.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabelDokterMouseClicked(evt);
@@ -385,17 +436,19 @@ public class MasterDataPasien extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 759, Short.MAX_VALUE)
+            .addGap(0, 774, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 759, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 774, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 365, Short.MAX_VALUE)
+            .addGap(0, 427, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         jButton5.setBackground(new java.awt.Color(255, 255, 102));
@@ -423,13 +476,15 @@ public class MasterDataPasien extends javax.swing.JFrame {
             }
         });
 
-        Jam.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        Jam.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         Jam.setForeground(new java.awt.Color(255, 255, 255));
         Jam.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        Jam.setText("Jam");
 
         Tanggal.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         Tanggal.setForeground(new java.awt.Color(255, 255, 255));
         Tanggal.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        Tanggal.setText("Tanggal");
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 102));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Form Pasien"));
@@ -511,11 +566,11 @@ public class MasterDataPasien extends javax.swing.JFrame {
                     .addComponent(txtUmur)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtAgama, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(116, Short.MAX_VALUE))
+                .addContainerGap(79, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(getIDPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21))
+                .addComponent(getIDPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addContainerGap()
@@ -525,7 +580,7 @@ public class MasterDataPasien extends javax.swing.JFrame {
                         .addComponent(jLabel6))
                     .addGap(18, 18, 18)
                     .addComponent(txtidPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(116, Short.MAX_VALUE)))
+                    .addContainerGap(79, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -562,7 +617,7 @@ public class MasterDataPasien extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtUmur, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10))
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addContainerGap()
@@ -573,7 +628,7 @@ public class MasterDataPasien extends javax.swing.JFrame {
                     .addComponent(jLabel5)
                     .addGap(18, 18, 18)
                     .addComponent(jLabel6)
-                    .addContainerGap(336, Short.MAX_VALUE)))
+                    .addContainerGap(334, Short.MAX_VALUE)))
         );
 
         txtnamaPasien.getAccessibleContext().setAccessibleDescription("Nama Dokter");
@@ -606,102 +661,161 @@ public class MasterDataPasien extends javax.swing.JFrame {
             }
         });
 
+        btnCetak.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/printer-icon.png"))); // NOI18N
+        btnCetak.setText("Print");
+        btnCetak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCetakActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSeparator2)
-                .addContainerGap())
+            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(btnMObat, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnMSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnMApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnMDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(Tanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnMObat, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(Jam, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(237, 237, 237))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnMSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnMApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnMDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(421, 421, 421))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(Tanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Jam, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(52, 52, 52))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(42, 42, 42)
-                        .addComponent(btnTambah)
-                        .addGap(39, 39, 39)
-                        .addComponent(btnEdit)
-                        .addGap(32, 32, 32)
-                        .addComponent(btnHapus))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(51, Short.MAX_VALUE))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(btnTambah)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(347, 347, 347)
+                                .addComponent(btnCetak, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(21, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnMObat, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnMSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnMDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnMApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Jam, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(Tanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGap(22, 22, 22)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnMObat, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnMSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnMDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnMApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(Jam, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Tanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1)
-                        .addGap(24, 24, 24)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)))
-                .addGap(6, 6, 6)
+                .addGap(10, 10, 10)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnTambah)
-                            .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(50, Short.MAX_VALUE))
+                        .addGap(4, 4, 4)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnTambah)
+                    .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCetak, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
 
         jMenuDashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/home.png"))); // NOI18N
         jMenuDashboard.setText("Dashboard");
         jMenuDashboard.setAlignmentX(0.0F);
-        jMenuDashboard.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuDashboardActionPerformed(evt);
+        jMenuDashboard.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuDashboardMouseClicked(evt);
             }
         });
         jMenuBar1.add(jMenuDashboard);
 
         jMenuMasterData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/archive.png"))); // NOI18N
         jMenuMasterData.setText("Master Data");
+
+        itemApoteker.setText("Data Apoteker");
+        itemApoteker.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemApotekerActionPerformed(evt);
+            }
+        });
+        jMenuMasterData.add(itemApoteker);
+
+        itemDokter.setText("Data Dokter");
+        itemDokter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemDokterActionPerformed(evt);
+            }
+        });
+        jMenuMasterData.add(itemDokter);
+
+        itemObat.setText("Data Obat");
+        itemObat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemObatActionPerformed(evt);
+            }
+        });
+        jMenuMasterData.add(itemObat);
+
+        itemPasien.setText("Data Pasien");
+        itemPasien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemPasienActionPerformed(evt);
+            }
+        });
+        jMenuMasterData.add(itemPasien);
+
+        itemSupplier.setText("Data Supplier");
+        itemSupplier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemSupplierActionPerformed(evt);
+            }
+        });
+        jMenuMasterData.add(itemSupplier);
+
+        itemUser.setText("Data User");
+        jMenuMasterData.add(itemUser);
+
         jMenuBar1.add(jMenuMasterData);
 
         jMenuTransaksi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/dompet.png"))); // NOI18N
         jMenuTransaksi.setText("Transaksi");
+        jMenuTransaksi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuTransaksiMouseClicked(evt);
+            }
+        });
         jMenuTransaksi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuTransaksiActionPerformed(evt);
@@ -713,25 +827,63 @@ public class MasterDataPasien extends javax.swing.JFrame {
         jMenuLaporan.setText("Laporan");
         jMenuLaporan.setToolTipText("Report");
 
-        jMenuItemPembelian.setText("Pembelian");
+        jMenuItemPembelian.setText("Data Pembelian");
+        jMenuItemPembelian.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemPembelianActionPerformed(evt);
+            }
+        });
         jMenuLaporan.add(jMenuItemPembelian);
 
-        jMenuItemPenjualan.setText("Penjualan");
+        jMenuItemPenjualan.setText("Data Penjualan");
+        jMenuItemPenjualan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemPenjualanActionPerformed(evt);
+            }
+        });
         jMenuLaporan.add(jMenuItemPenjualan);
 
         jMenu1.setText("Master");
 
-        jMenuItemObatMaster.setText("Obat");
+        jMenuItemObatMaster.setText("Data Obat");
+        jMenuItemObatMaster.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemObatMasterActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItemObatMaster);
 
-        jMenuItemSupplierMaster.setText("Supplier");
+        jMenuItemSupplierMaster.setText("Data Supplier");
+        jMenuItemSupplierMaster.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemSupplierMasterActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItemSupplierMaster);
 
-        jMenuItemDokter.setText("Dokter");
+        jMenuItemDokter.setText("Data Dokter");
+        jMenuItemDokter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemDokterActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItemDokter);
 
-        jMenuItemApoteker.setText("Apoteker");
+        jMenuItemApoteker.setText("Data Apoteker");
+        jMenuItemApoteker.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemApotekerActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItemApoteker);
+
+        jMenuItemPasien.setText("Data Pasien");
+        jMenuItemPasien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemPasienActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItemPasien);
 
         jMenuLaporan.add(jMenu1);
 
@@ -752,30 +904,21 @@ public class MasterDataPasien extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuDashboardActionPerformed
-        // TODO add your handling code here:
-        MainMenu mn= new MainMenu();
-        mn.setVisible(true);
-    }//GEN-LAST:event_jMenuDashboardActionPerformed
-
     private void jMenuTransaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuTransaksiActionPerformed
         // TODO add your handling code here:
-        TransaksiMenu tm= new TransaksiMenu();
+        TransaksiPembelian tm= new TransaksiPembelian();
         tm.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jMenuTransaksiActionPerformed
 
     private void jMenuLogoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuLogoutMouseClicked
@@ -837,6 +980,196 @@ public class MasterDataPasien extends javax.swing.JFrame {
         mda.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnMApotekerActionPerformed
+
+    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
+      
+        try {
+            HashMap data=new HashMap();
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/master/LapDataPasien.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data ");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+             JOptionPane.showMessageDialog(null, "Error " + e);
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnCetakActionPerformed
+
+    private void itemApotekerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemApotekerActionPerformed
+        MasterDataApoteker mda = new MasterDataApoteker();
+        mda.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemApotekerActionPerformed
+
+    private void itemDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemDokterActionPerformed
+        MasterDataDokter mdd = new MasterDataDokter();
+        mdd.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemDokterActionPerformed
+
+    private void itemObatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemObatActionPerformed
+        MasterDataObat mdo = new MasterDataObat();
+        mdo.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemObatActionPerformed
+
+    private void itemPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemPasienActionPerformed
+        MasterDataPasien mdp = new MasterDataPasien();
+        mdp.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemPasienActionPerformed
+
+    private void itemSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSupplierActionPerformed
+        MasterDataSupplier mds = new MasterDataSupplier();
+        mds.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemSupplierActionPerformed
+
+    private void jMenuDashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuDashboardMouseClicked
+        String nama = null;
+        MainMenu mn= new MainMenu(nama);
+        mn.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jMenuDashboardMouseClicked
+
+    private void jMenuTransaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuTransaksiMouseClicked
+        TransaksiPembelian mn= new TransaksiPembelian();
+        mn.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jMenuTransaksiMouseClicked
+
+    private void jMenuItemPembelianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPembelianActionPerformed
+        ReportMenu pop=new ReportMenu();
+        pop.setVisible(true);
+        pop.setAlwaysOnTop(rootPaneCheckingEnabled);
+    }//GEN-LAST:event_jMenuItemPembelianActionPerformed
+
+    private void jMenuItemPenjualanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPenjualanActionPerformed
+        ReportMenu pop=new ReportMenu();
+        pop.setVisible(true);
+        pop.setAlwaysOnTop(rootPaneCheckingEnabled);
+    }//GEN-LAST:event_jMenuItemPenjualanActionPerformed
+
+    private void jMenuItemObatMasterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemObatMasterActionPerformed
+
+        try {
+            HashMap data=new HashMap();
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/master/LapDataObat.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data ");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        //      try {
+            //          File file = new File("");
+            //            String sc=file.getAbsolutePath()+ "\\src\\com\\apotikapp\\views\\report\\master\\LapDataObat.jrxml";
+            //            JasperDesign jasperDesign = JRXmlLoader.load(sc);
+            //            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+            //            JasperPrint jasperPrint = net.sf.jasperreports.engine.JasperFillManager.fillReport(jasperReport, null, Koneksi.getConnection());
+            //            JasperViewer.viewReport(jasperPrint, false);
+            //
+            //
+            //        }catch (Exception e) {
+            //             JOptionPane.showMessageDialog(null, "Error " + e.getMessage());
+            //            System.out.println(e);
+            //            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+            //        }
+    }//GEN-LAST:event_jMenuItemObatMasterActionPerformed
+
+    private void jMenuItemSupplierMasterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSupplierMasterActionPerformed
+
+        try {
+            HashMap data=new HashMap();
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/master/LapDataSupplier.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data ");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        //        try {
+            //          File file = new File("src/com/apotikapp/views/report/master/LapDataSupplier.jrxml");
+            //            JasperDesign jasperDesign = JRXmlLoader.load(file);
+            //            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+            //            JasperPrint jasperPrint = net.sf.jasperreports.engine.JasperFillManager.fillReport(jasperReport, null, Koneksi.getConnection());
+            //            JasperViewer.viewReport(jasperPrint, false);
+            //        }catch (Exception e) {
+            //             JOptionPane.showMessageDialog(null, "Error " + e.getMessage());
+            //            System.out.println(e);
+            //            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+            //        }
+    }//GEN-LAST:event_jMenuItemSupplierMasterActionPerformed
+
+    private void jMenuItemDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDokterActionPerformed
+        try {
+            HashMap data=new HashMap();
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/master/LapDataDokter.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data ");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItemDokterActionPerformed
+
+    private void jMenuItemApotekerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemApotekerActionPerformed
+        try {
+            HashMap data=new HashMap();
+            InputStream is=this.getClass().getResourceAsStream("/report/LapDataApoteker.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data ");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error " + e);
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItemApotekerActionPerformed
+
+    private void jMenuItemPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPasienActionPerformed
+
+        try {
+            HashMap data=new HashMap();
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/master/LapDataPasien.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data ");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error " + e);
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        //      try {
+            //          File file = new File("src/com/apotikapp/views/report/master/LapDataPasien.jrxml");
+            //            JasperDesign jasperDesign = JRXmlLoader.load(file);
+            //            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+            //            JasperPrint jasperPrint = net.sf.jasperreports.engine.JasperFillManager.fillReport(jasperReport, null, Koneksi.getConnection());
+            //            JasperViewer.viewReport(jasperPrint, false);
+            //        }catch (Exception e) {
+            //            System.out.println(e);
+            //            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+            //        }
+    }//GEN-LAST:event_jMenuItemPasienActionPerformed
 
     /**
      * @param args the command line arguments
@@ -907,6 +1240,7 @@ public class MasterDataPasien extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Jam;
     private javax.swing.JLabel Tanggal;
+    private javax.swing.JButton btnCetak;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnMApoteker;
@@ -915,6 +1249,12 @@ public class MasterDataPasien extends javax.swing.JFrame {
     private javax.swing.JButton btnMSupplier;
     private javax.swing.JButton btnTambah;
     private javax.swing.JButton getIDPasien;
+    private javax.swing.JMenuItem itemApoteker;
+    private javax.swing.JMenuItem itemDokter;
+    private javax.swing.JMenuItem itemObat;
+    private javax.swing.JMenuItem itemPasien;
+    private javax.swing.JMenuItem itemSupplier;
+    private javax.swing.JMenuItem itemUser;
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -932,6 +1272,7 @@ public class MasterDataPasien extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemApoteker;
     private javax.swing.JMenuItem jMenuItemDokter;
     private javax.swing.JMenuItem jMenuItemObatMaster;
+    private javax.swing.JMenuItem jMenuItemPasien;
     private javax.swing.JMenuItem jMenuItemPembelian;
     private javax.swing.JMenuItem jMenuItemPenjualan;
     private javax.swing.JMenuItem jMenuItemSupplierMaster;
@@ -956,6 +1297,5 @@ public class MasterDataPasien extends javax.swing.JFrame {
     private javax.swing.JTextField txtnoTelepon;
     private javax.swing.JTextField txttmpLahir;
     // End of variables declaration//GEN-END:variables
-
    
 }
