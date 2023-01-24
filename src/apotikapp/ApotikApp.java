@@ -8,6 +8,8 @@ import Koneksi.Koneksi;
 import com.apotikapp.views.Login;
 import java.sql.Connection;
 import java.sql.SQLException;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 /**
  *
@@ -19,8 +21,27 @@ public class ApotikApp {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Login lg= new Login();
-        lg.setVisible(true);
+        
+        try {
+            
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                
+                if("Nimbus".equals(info.getName())) {
+                    
+                    UIManager.setLookAndFeel(info.getClassName());
+                    
+                    Login lg= new Login();
+                    lg.setVisible(true);
+ //                   new ApotikApp();
+ //                   break;
+                } else {
+                    
+                }
+            }
+        } catch (Exception e) {
+            
+        }
+        
     }
     
 }
