@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Laporan Resep" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f4172fec-b74c-4567-beb7-66695a144d7a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+                                   tb_resep.id_resep,
+                                   tb_resep.tgl_resep,
+                                   tb_dokter.nama_dokter AS dokter,
+                                   tb_pasien.nama_pasien AS pasien
+                              FROM tb_resep
+	JOIN tb_dokter ON tb_resep.id_dokter = tb_dokter.id_dokter
+	JOIN tb_pasien ON tb_resep.id_pasien = tb_pasien.id_pasien
+	ORDER BY tb_resep.id_resep ASC]]>
+	</queryString>
+	<field name="id_resep" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tgl_resep" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dokter" class="java.lang.String"/>
+	<field name="pasien" class="java.lang.String"/>
+	<title>
+		<band height="143" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="111" width="131" height="25" uuid="69894d90-14de-4602-8260-04f611cd1225"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Laporan Resep]]></text>
+			</staticText>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="605" y="111" width="197" height="20" forecolor="#000000" uuid="c7d01267-c889-4295-bdb7-148098dee033"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="260" y="50" width="250" height="43" uuid="e7d30e71-751b-4250-81a4-aaa56deb9ba6"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[APJ: apt.  Iput Yuly Istanti, S.Si.
+SIPA: 19770714/SIPA_33.13/2021/2.157
+Ijin : 13062200314170001
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="22" width="250" height="41" uuid="147559fa-20cb-4407-8eeb-3c4d17cf1b22"/>
+				<textElement textAlignment="Center">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUMBER WARAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="289" y="1" width="182" height="21" uuid="331a9b07-3f9e-470c-94d0-b28314d989dd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APOTEK]]></text>
+			</staticText>
+			<image>
+				<reportElement x="126" y="1" width="108" height="92" uuid="2e626a3b-473d-419e-8987-616ac2a4800c"/>
+				<imageExpression><![CDATA["D:\\FLO\\ApotikApp\\src\\Images\\logo.jpg"]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="1" y="92" width="801" height="1" uuid="4f70b092-f41c-4d35-ac2a-246ad72c7342"/>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="142" width="802" height="1" uuid="a4dbe515-a6c6-42b1-97c3-bb5a1887df46"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="802" height="1" uuid="6b71e369-490e-4f9d-b2ca-de94a84974c4"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="83" y="0" width="117" height="15" forecolor="#000000" uuid="a58d023d-de1d-471b-befd-8d2c12279cbf"/>
+				<text><![CDATA[ID Resep]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="200" y="0" width="200" height="15" forecolor="#000000" uuid="88acfc87-1129-4bea-b954-c2ebb6b5cc7e"/>
+				<text><![CDATA[Tanggal Resep]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="400" y="0" width="200" height="15" forecolor="#000000" uuid="ab89c147-06c4-42dc-812d-a76e59fc1284"/>
+				<text><![CDATA[Nama Dokter]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="600" y="0" width="200" height="15" forecolor="#000000" uuid="32348846-e4f6-4806-a9df-12e4f40e92f6"/>
+				<text><![CDATA[Nama Pasien]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="53" y="1" width="30" height="15" forecolor="#000000" uuid="c7df8b84-34e4-4a19-861a-6734a4d2493c"/>
+				<text><![CDATA[No]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<frame>
+				<reportElement style="Row" mode="Opaque" x="0" y="0" width="802" height="15" uuid="d60c263a-c6cd-437f-9713-c1805e8d8e12"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="83" y="0" width="117" height="15" uuid="9eb86103-008e-4c81-9340-569066ebe497"/>
+					<textFieldExpression><![CDATA[$F{id_resep}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="200" y="0" width="200" height="15" uuid="27f4984b-91da-4f7e-83a8-64c99a23f1f3"/>
+					<textFieldExpression><![CDATA[$F{tgl_resep}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="400" y="0" width="200" height="15" uuid="b9bd2a45-2d5d-4ca9-8c31-8fb738b03db9"/>
+					<textFieldExpression><![CDATA[$F{dokter}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="600" y="0" width="200" height="15" uuid="933d0bf8-219d-4b1b-8ac3-4850c3cad9d1"/>
+					<textFieldExpression><![CDATA[$F{pasien}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="53" y="0" width="30" height="14" uuid="34983e4c-6d5c-4bc3-9492-d58a3766d717"/>
+					<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="18" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="802" height="1" uuid="b7fcec92-2cb9-4054-b342-0b03fca68008"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="25" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-21" y="1" width="843" height="24" forecolor="#D0B48E" backcolor="#F2EBDF" uuid="c76dec78-d3dd-4d5b-9959-09515046a4aa"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="783" y="1" width="40" height="20" forecolor="#736343" uuid="95c38b88-0b55-4a96-a1a3-8214933aeb07"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="703" y="1" width="80" height="20" forecolor="#736343" uuid="97e246ed-6bd0-4b91-9792-4276494b4075"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+</jasperReport>
