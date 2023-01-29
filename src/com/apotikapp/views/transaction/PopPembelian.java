@@ -8,7 +8,9 @@ import Koneksi.Koneksi;
 import Koneksi.PetugasSession;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,11 +18,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -38,12 +46,23 @@ public class PopPembelian extends javax.swing.JFrame {
         initComponents();
         lblLevel.setText(PetugasSession.getU_username());
         SelectSupplier();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SelectApoteker();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Calendar cal = Calendar.getInstance();  
         txttanggal.setText(dateFormat.format(cal.getTime()));
+        txttanggal.setEnabled(false);
         TxtEmpty();
+        txtIdBeli.setText(AutoIdBeli());
+        Hidden();
         
         //untuk close frame
+    }
+    
+    private void Hidden(){
+        txtid_pelanggan.setVisible(false);
+        txtIdBeli.setVisible(false);
+        txtidSupplier.setVisible(false);
+        txtidApoteker.setVisible(false);
     }
     
     public String idobat, namaobat, hargaobat, qty, expired, jenis;
@@ -78,7 +97,6 @@ public class PopPembelian extends javax.swing.JFrame {
         
     }
     
-
     private String AutoIdBeli(){
         String sql = "SELECT max(RIGHT(id_beli,4)) FROM tb_beli ORDER BY id_beli DESC";
         String IDBeli = null;
@@ -146,10 +164,26 @@ public class PopPembelian extends javax.swing.JFrame {
     private void SelectSupplier() throws ClassNotFoundException{
         try {
             Statement state  = Koneksi.getConnection().createStatement();
-            Rs=state.executeQuery("SELECT * FROM tb_supplier");                        
+            Rs=state.executeQuery("SELECT id_supplier, nama_supplier FROM tb_supplier");                        
             cmbSupplier.addItem("Pilih");
             while(Rs.next()){
                 cmbSupplier.addItem(Rs.getString("id_supplier") + " " + Rs.getString("nama_supplier"));
+            }
+             Rs.close();
+             state.close();
+             Koneksi.getConnection().close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error " + e);
+        } 
+    }
+    
+    private void SelectApoteker() throws ClassNotFoundException{
+        try {
+            Statement state  = Koneksi.getConnection().createStatement();
+            Rs=state.executeQuery("SELECT id_apoteker, nama_apoteker FROM tb_apoteker");                        
+            cmbApoteker.addItem("Pilih");
+            while(Rs.next()){
+                cmbApoteker.addItem(Rs.getString("id_apoteker") + " " + Rs.getString("nama_apoteker"));
             }
              Rs.close();
              state.close();
@@ -203,7 +237,7 @@ public class PopPembelian extends javax.swing.JFrame {
                    total += amount;
             }
             //txtSubTotal.setText(""+total);
-            lblTotal.setText("Rp" +total);
+            lblTotal.setText(""+total);
     }
     
     private void TxtEmpty(){
@@ -211,15 +245,9 @@ public class PopPembelian extends javax.swing.JFrame {
         BtnEnabled(false);
         txtnamaObat.setText("");
         txtid_selected.setText("");
-        txtidSupplier.setVisible(false);
+        txtidSupplier.setVisible(true);
         txtid_pelanggan.setVisible(false);
         lblTotal.setText("");
-//        txtid_pelanggan.setVisible(false);
-//        txtid_petugas.setVisible(false);
-//        txtid_barang.setVisible(false);
-//        txtjumlah_barang_max.setVisible(false);
-//        cmbid_pelanggan.setSelectedItem("Pilih");
-//        cmbid_pelanggan.requestFocus();
     }
     
     private void TableEmpty(){
@@ -240,7 +268,6 @@ public class PopPembelian extends javax.swing.JFrame {
     }
     
     public void SaveData() throws ClassNotFoundException{
-        //String tgl = String.valueOf(fm.format(txttanggal.getDate()));
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
         //tanggal hari ini
@@ -248,12 +275,13 @@ public class PopPembelian extends javax.swing.JFrame {
         String noFaktur = txtnoFaktur.getText();
         String idSupplier = txtidSupplier.getText();
         String idObat =txtIdObat.getText();
-        String idApoteker = PetugasSession.getU_id();
+        String idApoteker = txtidApoteker.getText();
         String tglFaktur = txttanggal.getText();
         String idBeli = AutoIdBeli();
-                
+        String total = lblTotal.getText();
+        
         String id,id_barang, kode;
-        Integer id_barang_masuk = 0, jumlah, stok, not_found, empty = 0;
+        Integer id_barang_masuk = 0,qty, jumlah, stok, not_found, empty = 0;
         
         DefaultTableModel model = (DefaultTableModel) tabelKeranjang.getModel();
         int rowCount = model.getRowCount();
@@ -267,35 +295,53 @@ public class PopPembelian extends javax.swing.JFrame {
                         + "'"+idApoteker+"',"
                         + "'"+tglBeli+"',"
                         + "'"+tglFaktur+"',"
-                        + "'"+0+"')");
-                
+                        + "'"+total+"')");
                System.out.print("Berhasil tambah data\n");
                 //getRefresh();                
                 //JOptionPane.showMessageDialog(this, "Data Berhasil Disimpan !");
                 //refreshTabel();
                 state.close();
-             // this.dispose();
+                //this.dispose();
             }
             catch(Exception e){
+                JOptionPane.showMessageDialog(null, "Error " + e);
                 JOptionPane.showMessageDialog(this, "Data Gagal Disimpan !");
             }
-            //get data dari tabel barang
+            
+            //insert tabel pembelian detail
             try {
                 Statement state  = Koneksi.getConnection().createStatement();
-                Rs = state.executeQuery("SELECT MAX(id_barang) as max FROM tb_barang");
-                Rs.next();
-                id_barang = Rs.getString("max");
-               //konek.closekoneksi();
-               state.close();
-               System.out.print("Berhasil get data\n");
-            }catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error " + e);
+                int baris = tabelKeranjang.getRowCount();
+                String idBelii = txtIdBeli.getText();
+                for (int i = 0; i < baris; i++) {
+                    state.executeUpdate ("INSERT INTO tb_beli_detail(id_beli, id_obat, qty, expired_date, subtotal, status) VALUES('"
+                            + idBelii+"','"
+                            + ""+ tabelKeranjang.getValueAt(i, 0) +"','"
+                            + ""+ tabelKeranjang.getValueAt(i, 3) 
+                            +"','"+ tabelKeranjang.getValueAt(i, 5) +"','"+ tabelKeranjang.getValueAt(i, 6) +"','"+1+"')");
+                    empty = 1;
+                }
+                state.close();
+            } catch (Exception e) {
+                //JOptionPane.showMessageDialog(null, "Error " + e);
+                System.out.println(e +"simpan pembelian detail error");
             }
-            
-            //Loop Data
-            
-            
-            
+            JOptionPane.showMessageDialog(this, "Pembelian Berhasil Disimpan !");
+            String petugas = PetugasSession.getU_username();
+            try {
+                HashMap data=new HashMap();
+                data.put("petugas", petugas);
+                data.put("id_beli", txtIdBeli.getText());
+                InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/notaBeli.jrxml");
+                JasperReport jasperReport = JasperCompileManager.compileReport(is);
+                JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+                JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+                LaporanData.setTitle("Nota Pembelian");
+                LaporanData.setVisible(true);
+            }catch (Exception e) {
+                System.out.println(e);
+                JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+            }
         }else{
             JOptionPane.showMessageDialog(null, "Terdapat inputan yang kosong.");
         }
@@ -337,6 +383,7 @@ public class PopPembelian extends javax.swing.JFrame {
         cariObat = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         lblTotal = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelKeranjang = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
@@ -352,6 +399,10 @@ public class PopPembelian extends javax.swing.JFrame {
         txtidSupplier = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         lblLevel = new javax.swing.JLabel();
+        cmbApoteker = new javax.swing.JComboBox<>();
+        jLabel8 = new javax.swing.JLabel();
+        txtidApoteker = new javax.swing.JTextField();
+        txtIdBeli = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Transaksi Pembelian\n");
@@ -419,12 +470,16 @@ public class PopPembelian extends javax.swing.JFrame {
         lblTotal.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
         lblTotal.setText("total");
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel2.setText("Rp.");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(51, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14))
         );
@@ -432,7 +487,9 @@ public class PopPembelian extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
+                    .addComponent(jLabel2))
                 .addContainerGap())
         );
 
@@ -496,6 +553,17 @@ public class PopPembelian extends javax.swing.JFrame {
         jLabel3.setText("Login As");
 
         lblLevel.setText("jLabel4");
+
+        cmbApoteker.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbApotekerItemStateChanged(evt);
+            }
+        });
+
+        jLabel8.setText("Apoteker");
+
+        txtidApoteker.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
+        txtidApoteker.setEnabled(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -565,11 +633,18 @@ public class PopPembelian extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(txttanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtid_pelanggan, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(txtid_pelanggan, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtIdBeli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel7)
-                        .addGap(13, 13, 13)
-                        .addComponent(cmbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addGap(18, 18, 18)
+                                .addComponent(cmbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addGap(13, 13, 13)
+                                .addComponent(cmbApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(49, 49, 49))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -580,7 +655,9 @@ public class PopPembelian extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtidSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtidSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtidApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(40, 40, 40))
         );
         jPanel1Layout.setVerticalGroup(
@@ -588,10 +665,17 @@ public class PopPembelian extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(cmbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel7)
-                        .addComponent(txtidSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cmbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7)
+                            .addComponent(txtidSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(cmbApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel8))
+                            .addComponent(txtidApoteker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txttanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -603,6 +687,9 @@ public class PopPembelian extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(txtnoFaktur, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel6)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtIdBeli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(39, 39, 39)
@@ -753,6 +840,28 @@ public class PopPembelian extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSaveTrasactionActionPerformed
 
+    private void cmbApotekerItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbApotekerItemStateChanged
+        String[] nama_kategori = cmbApoteker.getSelectedItem().toString().split("\\s+");
+        String kode = nama_kategori[0];
+        if(!kode.equals("Pilih")){                       
+                try {
+                    Statement state  = Koneksi.getConnection().createStatement();
+                   Rs=state.executeQuery("SELECT id_apoteker FROM tb_apoteker WHERE id_apoteker='"+kode+"'");
+                    if(Rs.next()){
+                        txtidApoteker.setText(Rs.getString("id_apoteker"));
+                    }
+                    Rs.close();
+                    state.close();
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, "Error " + e);
+                } catch (ClassNotFoundException ex) { 
+                Logger.getLogger(PopPembelian.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+        }else{
+           
+        }
+    }//GEN-LAST:event_cmbApotekerItemStateChanged
+
     /**
      * @param args the command line arguments
      */
@@ -797,6 +906,7 @@ public class PopPembelian extends javax.swing.JFrame {
     private javax.swing.JButton btnSaveTrasaction;
     private javax.swing.JButton btnTableEmpty;
     private javax.swing.JLabel cariObat;
+    private javax.swing.JComboBox<String> cmbApoteker;
     private javax.swing.JComboBox<String> cmbSupplier;
     private javax.swing.JButton getIDResep;
     private com.toedter.calendar.JCalendar jCalendar1;
@@ -806,10 +916,12 @@ public class PopPembelian extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -820,9 +932,11 @@ public class PopPembelian extends javax.swing.JFrame {
     private javax.swing.JButton setToKeranjang;
     private javax.swing.JTable tabelKeranjang;
     private com.toedter.calendar.JDateChooser tglExp;
+    private javax.swing.JTextField txtIdBeli;
     private javax.swing.JTextField txtIdObat;
     private javax.swing.JComboBox<String> txtJenisObat;
     private javax.swing.JTextField txtharga;
+    private javax.swing.JTextField txtidApoteker;
     private javax.swing.JTextField txtidSupplier;
     private javax.swing.JTextField txtid_pelanggan;
     private javax.swing.JTextField txtid_selected;
