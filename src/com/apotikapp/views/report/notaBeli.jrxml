@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Nota Pembelian" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="00b9a3aa-7f65-4af1-8b9a-cf0b5f326469">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="id_beli" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="petugas" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	tb_beli_detail.id_obat,
+	tb_obat.nama_obat,
+	tb_obat.jenis_obat, 	
+	tb_beli_detail.qty,
+	tb_beli_detail.expired_date,
+	tb_beli_detail.subtotal,
+	tb_beli.no_faktur,
+	tb_beli.tgl_faktur,
+	tb_beli.total_harga,
+	
+	tb_apoteker.nama_apoteker AS nama_apoteker,
+	tb_supplier.nama_supplier AS nama_supplier 
+FROM
+	tb_beli_detail
+	JOIN tb_beli ON tb_beli.id_beli = tb_beli_detail.id_beli
+	JOIN tb_supplier ON tb_supplier.id_supplier = tb_beli.id_supplier
+	JOIN tb_obat ON tb_obat.id_obat = tb_beli_detail.id_obat
+	JOIN tb_apoteker ON tb_apoteker.id_apoteker = tb_beli.id_apoteker 
+WHERE
+	tb_beli.id_beli = $P{id_beli}]]>
+	</queryString>
+	<field name="id_obat" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_obat" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jenis_obat" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qty" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="expired_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="subtotal" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="no_faktur" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tgl_faktur" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_harga" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_apoteker" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_supplier" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="112" splitType="Stretch">
+			<image>
+				<reportElement x="164" y="8" width="105" height="95" uuid="750ebb0f-a93d-493d-aace-9c2be6af864c"/>
+				<imageExpression><![CDATA["D:\\FLO\\ApotikApp\\src\\Images\\logo.jpg"]]></imageExpression>
+			</image>
+			<elementGroup>
+				<staticText>
+					<reportElement x="278" y="14" width="241" height="40" uuid="a7bc72c0-9779-4efd-ae43-7b98924ed5e0"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="22" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SUMBER WARAS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="349" y="8" width="100" height="20" uuid="c96377a7-247a-44d1-b772-5902464dcf71"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[APOTEK]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="286" y="54" width="216" height="40" uuid="edfd2d54-e1e6-47a3-bf41-7f16d2a458c2"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[APJ: apt.  Iput Yuly Istanti, S.Si.
+SIPA: 19770714/SIPA_33.13/2021/2.157
+Ijin : 13062200314170001
+]]></text>
+				</staticText>
+			</elementGroup>
+			<line>
+				<reportElement x="1" y="109" width="801" height="1" uuid="7dc70eeb-5036-4372-a568-c199f9b4014e"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="56" splitType="Stretch">
+			<rectangle>
+				<reportElement x="326" y="11" width="203" height="32" uuid="a095bc5f-0462-4d62-8503-538b3d5d2e34"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="339" y="18" width="163" height="20" uuid="739414e0-62bc-4f23-bb5b-67c359ff9fd2"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[TANDA BUKTI OBAT MASUK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="613" y="31" width="64" height="20" uuid="21eda7c1-81ce-4d71-a724-3270df511df1"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Apoteker]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="613" y="10" width="64" height="20" uuid="8e0a29c6-3f50-43b3-b717-87e00ab39c51"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Supplier]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="108" y="32" width="140" height="20" uuid="7df4f1e9-f068-42cc-a6bd-0379e311f81f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tgl_faktur}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="30" width="82" height="20" uuid="baa646d5-6608-47ec-b91f-4527fad94395"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tgl Transaksi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="679" y="31" width="10" height="20" uuid="c291319f-e1a7-4ad3-a00a-2c17c17807a3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="94" y="10" width="10" height="20" uuid="dc91b042-48ef-4d6f-aec3-6e198bf5e991"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="93" y="30" width="10" height="20" uuid="6f9389a8-1d9e-483a-8d0f-5454e18295eb"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="679" y="10" width="10" height="20" uuid="a167c25f-fb78-4f62-a9d7-5ee5a2836926"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="10" width="82" height="20" uuid="3aecd897-8047-4036-ac45-a2891c600279"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No Faktur]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="689" y="32" width="110" height="20" uuid="50375337-92e9-4b79-a8b8-68cb4231cdb7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nama_apoteker}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="108" y="10" width="141" height="20" uuid="e9658ba0-e7ca-4eb3-891f-bb65a17a2262"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{no_faktur}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="689" y="10" width="110" height="20" uuid="72f6bed1-2394-42d2-8ec5-449e86b85494"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nama_supplier}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<frame>
+				<reportElement x="2" y="2" width="800" height="20" uuid="94585ed0-c8f2-4e42-9358-53143e281844"/>
+				<rectangle>
+					<reportElement x="0" y="0" width="59" height="20" uuid="03caebb0-2f12-4137-8d95-1ddc9f864415"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="59" y="0" width="103" height="20" uuid="077f8b43-2c96-41c6-91a9-68ccd03b3586"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="162" y="0" width="201" height="20" uuid="af5bdc68-8bbb-4d49-9d8a-885abb1b7025"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="363" y="0" width="104" height="20" uuid="fcf3bce2-7359-4552-af47-ae8acd1848ef"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="467" y="0" width="50" height="20" uuid="0dd23756-3a17-42b8-97d9-24b4930f2769"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="517" y="0" width="113" height="20" uuid="7f07fc0f-852f-41ec-bcd6-2c231145fe29"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="630" y="0" width="167" height="20" uuid="8f0d28bf-022c-4831-b5e7-2a8a2471675f"/>
+				</rectangle>
+				<staticText>
+					<reportElement style="Column header" x="59" y="0" width="102" height="20" forecolor="#736343" uuid="0d64c30a-6b1b-484b-beb1-666a77ad95e5"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[ ID Obat]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" x="161" y="0" width="202" height="20" forecolor="#736343" uuid="743ac267-6373-4ef1-b83d-ad7f4592ccfd"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[ Nama Obat]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" x="363" y="0" width="104" height="20" forecolor="#736343" uuid="55ca1a13-d221-4f99-bd4f-ee282772565b"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[ Jenis Obat]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" x="519" y="0" width="111" height="20" forecolor="#736343" uuid="500ab4fe-b86d-431e-b524-e45d28689943"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Tgl Expired]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" x="630" y="0" width="167" height="20" forecolor="#736343" uuid="bb4094a7-a64c-4835-9bd1-976e205a8fee"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Sub Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" x="9" y="0" width="50" height="20" forecolor="#736343" uuid="0c72214f-6ff8-44bf-9a19-86b9d7fc2508"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[No]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" x="467" y="0" width="52" height="20" forecolor="#736343" uuid="a9514ba6-132d-4774-8760-0df244bbee8b"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Qty]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<frame>
+				<reportElement style="Row" mode="Opaque" x="0" y="0" width="802" height="15" uuid="fd5a6190-fbef-46c9-a71b-9fbc945830ce"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="61" y="0" width="103" height="15" uuid="b5de1c9a-523d-4b38-8734-f17a9093f1ab"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{id_obat}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="163" y="0" width="202" height="15" uuid="aee5684c-458d-4f63-b3b1-8579c60d3192"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{nama_obat}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="365" y="0" width="104" height="15" uuid="0f05f7ec-a087-4357-8eaa-339afb3a4462"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{jenis_obat}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="469" y="0" width="48" height="15" uuid="1ec5be5d-09a7-4693-8107-d1dab5aa4832"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{qty}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+					<reportElement style="Detail" x="517" y="0" width="115" height="15" uuid="7c2eaaf2-a5f5-4fc6-ba02-737fc63aa587"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{expired_date}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="¤ #,##0.00">
+					<reportElement style="Detail" x="632" y="0" width="167" height="15" uuid="974cf1df-cad6-4552-849a-aa24275b8732"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="2" y="0" width="59" height="15" uuid="af44f465-a2a5-478a-959c-22650bc28faa"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="149" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="802" height="1" uuid="c8de76dc-4039-49fb-81e8-0ccda335cc77"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="700" y="10" width="99" height="20" uuid="cfcac9b0-dc01-4372-9501-213ba4791a9e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_harga}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="629" y="10" width="71" height="20" uuid="dd0e37bc-19c2-4921-9fcb-84a89836b1f6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="613" y="53" width="76" height="20" uuid="252a3e27-87c3-4235-8c3d-76921bb26e84"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Karanganyar,]]></text>
+			</staticText>
+			<line>
+				<reportElement x="613" y="130" width="172" height="1" uuid="3af73c32-ae66-44eb-ac5a-9132fc3e62d1"/>
+			</line>
+			<textField>
+				<reportElement x="663" y="111" width="100" height="20" uuid="a68e9782-6708-4547-a1ee-f6ea9764aa94"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{petugas}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="686" y="53" width="113" height="20" uuid="d2c51ae0-a84c-4d13-83c7-7df07068114d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="25" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-21" y="1" width="843" height="24" forecolor="#D0B48E" backcolor="#F2EBDF" uuid="a77dbc98-64ca-46f7-895e-c569ea0ed505"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="783" y="1" width="40" height="20" forecolor="#736343" uuid="70e3a903-ddcb-4df6-bfb0-2f1d73807d27"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="703" y="1" width="80" height="20" forecolor="#736343" uuid="24dca2e1-1af6-4963-8101-0fc9a9d3d705"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="22" y="1" width="197" height="20" forecolor="#736343" uuid="16ac557a-8913-4bf6-8517-9c45c0638f07"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

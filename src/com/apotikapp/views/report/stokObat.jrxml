@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="12056a39-6187-44ad-a4fe-5182eaf8923c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="76"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="petugas" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT * FROM tb_obat]]>
+	</queryString>
+	<field name="id_obat" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_obat" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jenis_obat" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dosis" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="harga_beli" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="harga_jual" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="stok" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="187" splitType="Stretch">
+			<staticText>
+				<reportElement x="288" y="24" width="241" height="40" uuid="c6e434bf-a1c9-47e3-945d-eeaade572db9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUMBER WARAS]]></text>
+			</staticText>
+			<image>
+				<reportElement x="166" y="9" width="105" height="95" uuid="75223f7d-a2b3-4dad-98a0-c524509f1b5c"/>
+				<imageExpression><![CDATA["D:\\FLO\\ApotikApp\\src\\Images\\logo.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="356" y="9" width="100" height="20" uuid="05c877a7-77f3-4429-98ff-d644f7a9cc7b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APOTEK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="296" y="64" width="216" height="40" uuid="d52deea4-8a0d-45bf-ba53-da5d3587866b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[APJ: apt.  Iput Yuly Istanti, S.Si.
+SIPA: 19770714/SIPA_33.13/2021/2.157
+Ijin : 13062200314170001
+]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="109" width="801" height="1" uuid="e7826004-2aab-4634-bf2f-48e2cdaaa1b5"/>
+			</line>
+			<staticText>
+				<reportElement x="1" y="167" width="145" height="20" uuid="093a9239-66ed-47cc-8137-e8bd6241344e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[Laporan Data Stok Obat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="120" width="160" height="20" uuid="84d707b6-3021-4055-91b0-154193f0c9bc"/>
+				<text><![CDATA[Yth. Apoteker Penanggung Jawab]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="802" height="1" uuid="055ca7d0-7714-4fa6-9800-a3ccce52350a"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="86" y="0" width="71" height="15" forecolor="#736343" uuid="086f655b-592e-464d-b543-04d9cd647d85"/>
+				<text><![CDATA[ID Obat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="157" y="0" width="114" height="15" forecolor="#736343" uuid="4ba28f67-8dbd-42af-8ee3-d231c85637a0"/>
+				<text><![CDATA[Nama Obat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="271" y="0" width="114" height="15" forecolor="#736343" uuid="50c790cf-3c1a-4a87-8bf4-8f476eaeff71"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Jenis Obat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="385" y="0" width="114" height="15" forecolor="#736343" uuid="a889e3a7-1893-4888-aad1-b939a42b8710"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Dosis]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="499" y="0" width="114" height="15" forecolor="#736343" uuid="cfe5d8fd-5aa4-4c87-a140-6173e11b1e5d"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Harga Jual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="613" y="0" width="114" height="15" forecolor="#736343" uuid="6a8279ec-f7e0-4ea6-b211-430df4893be9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Stok]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="43" y="1" width="43" height="15" forecolor="#736343" uuid="495b5faf-46e6-4be7-be5a-bdb816d7f8bf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[No]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="1" y="1" width="802" height="1" uuid="8163dd10-1ce6-4fbd-aff3-01b9a9042b5e"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<frame>
+				<reportElement style="Row" mode="Opaque" x="0" y="0" width="802" height="15" uuid="34347c8e-898b-4cec-8858-e150bac4180d"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="86" y="0" width="71" height="15" uuid="1cb497b0-8ee9-4577-82df-f885052b786a"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{id_obat}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="157" y="0" width="114" height="15" uuid="b2ea82a4-8813-43e1-b1d4-8c66dff4ae87"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{nama_obat}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="271" y="0" width="114" height="15" uuid="dacb57f6-44fc-4231-9e7c-8fe035272b8c"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{jenis_obat}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="385" y="0" width="114" height="15" uuid="d65b9d33-8796-428c-9a16-f8d49647e67c"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{dosis}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="¤ #,##0.00">
+					<reportElement style="Detail" x="499" y="0" width="114" height="15" uuid="085743f7-735c-4214-9f84-007f32b710bd"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{harga_jual}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="613" y="0" width="114" height="15" uuid="f3c98990-4c54-4dd9-8605-616f5fa4d2cb"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{stok}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="43" y="0" width="43" height="15" uuid="9d7ff317-6d95-46ad-992b-d23829b44e02"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="102" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="802" height="1" uuid="3d84e925-a79e-4d3c-978c-b7519b9255f7"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="681" y="16" width="113" height="20" uuid="0401a412-f556-4b91-b8fa-1936e2667b9f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="608" y="16" width="76" height="20" uuid="52e2c362-0689-45a4-8efe-1fe5a51b2cae"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Karanganyar,]]></text>
+			</staticText>
+			<line>
+				<reportElement x="608" y="93" width="172" height="1" uuid="e109536d-f5eb-4b75-9820-e00f7c41ced6"/>
+			</line>
+			<textField>
+				<reportElement x="658" y="74" width="100" height="20" uuid="7af3e48e-0e9a-4df2-8faa-a761fde86c00"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{petugas}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="25" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-21" y="1" width="843" height="24" forecolor="#D0B48E" backcolor="#F2EBDF" uuid="6978db48-7e47-46c6-9f7e-d39329dc4a69"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="783" y="1" width="40" height="20" forecolor="#736343" uuid="368d012b-7aa6-4c55-995e-475fc6a1d0fe"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="703" y="1" width="80" height="20" forecolor="#736343" uuid="d219df19-7703-4991-bb35-fb18377fc6f2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="22" y="1" width="197" height="20" forecolor="#736343" uuid="b9949e03-0359-4a93-8ca3-f2844eeb2905"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
