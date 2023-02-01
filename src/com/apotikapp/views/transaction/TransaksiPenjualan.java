@@ -4,10 +4,39 @@
  */
 package com.apotikapp.views.transaction;
 
+import Koneksi.Koneksi;
+import Koneksi.PetugasSession;
+import apotikapp.RupiahCell;
 import com.apotikapp.views.Login;
 import com.apotikapp.views.MainMenu;
+import com.apotikapp.views.master.MasterDataApoteker;
+import com.apotikapp.views.master.MasterDataDokter;
+import com.apotikapp.views.master.MasterDataObat;
+import com.apotikapp.views.master.MasterDataPasien;
+import com.apotikapp.views.master.MasterDataSupplier;
+import com.apotikapp.views.report.ReportMenu;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -18,11 +47,86 @@ public class TransaksiPenjualan extends javax.swing.JFrame {
     /**
      * Creates new form MainMenu
      */
+    ResultSet Rs;
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    PetugasSession PetugasSession = new PetugasSession();
     public TransaksiPenjualan() {
         initComponents();
         setExtendedState(MAXIMIZED_BOTH);
+        Datatabel();
+            this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent we)
+                { 
+                    String ObjButtons[] = {"Yes","No"};
+                    int PromptResult = JOptionPane.showOptionDialog(null,"Anda yakin ingin keluar aplikasi?","Aplikasi Apotik",JOptionPane.DEFAULT_OPTION,JOptionPane.WARNING_MESSAGE,null,ObjButtons,ObjButtons[1]);
+                    if(PromptResult==JOptionPane.YES_OPTION)
+                    {
+                        System.exit(0);
+                    }
+                }
+            });
     }
-
+    
+     private void refreshTabel() {
+        DefaultTableModel model = (DefaultTableModel)tabelPenjualan.getModel();
+        model.setRowCount(0);
+        Datatabel();
+    }
+    
+    public void Datatabel(){
+       DefaultTableModel tabel = new DefaultTableModel();
+       //tabel.addColumn("No");
+       tabel.addColumn("ID Transaksi");
+       tabel.addColumn("Tgl Transaksi");
+       tabel.addColumn("Jenis Transaksi");
+       tabel.addColumn("Pasien");
+       tabel.addColumn("Apoteker");
+       tabel.addColumn("Total Harga");
+       try{
+           
+           Statement state  = Koneksi.getConnection().createStatement();
+           Rs = state.executeQuery("SELECT\n" +
+                            "	tb_jual.id_transaksi,\n" +
+                            "	tb_jual.tgl_transaksi,\n" +
+                            "	tb_jual.jenis_transaksi,\n" +
+                            "	tb_pasien.nama_pasien AS nama_pasien,\n" +
+                            "	tb_apoteker.nama_apoteker AS nama_apoteker,\n" +
+                            "	tb_jual.total_harga \n" +
+                            "FROM\n" +
+                            "	tb_jual\n" +
+                            "	JOIN tb_pasien ON tb_pasien.id_pasien = tb_jual.id_pasien\n" +
+                            "	JOIN tb_apoteker ON tb_apoteker.id_apoteker = tb_jual.id_apoteker");
+          
+           while(Rs.next()){
+                
+               tabel.addRow(new Object[]{
+                   
+                   Rs.getString(1),
+                   Rs.getString(2),
+                   Rs.getString(3),
+                   Rs.getString(4),
+                   Rs.getString(5),
+                   Rs.getString(6),
+                 
+               });
+               
+               tabelPenjualan.setModel(tabel);
+           }
+          
+            String count_rows = String.valueOf(tabel.getRowCount());
+            lblCount.setText( count_rows+" Item" );
+           state.close();
+           Rs.close();
+       }
+       catch(Exception e){
+           System.out.println(e);
+       }
+    }
+     
+     
+     
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,20 +136,33 @@ public class TransaksiPenjualan extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        btnReload = new javax.swing.JButton();
+        btnPrint = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         btnMPembelian = new javax.swing.JButton();
         btnMPenjualan = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        jbtnResep = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tabelPembelian = new javax.swing.JTable();
+        tabelPenjualan = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
+        jTambah = new javax.swing.JButton();
+        btnExpiredObat = new javax.swing.JButton();
+        btnStokObat = new javax.swing.JButton();
+        lblCount = new javax.swing.JLabel();
+        btnReload1 = new javax.swing.JButton();
+        btnPrint1 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuDashboard = new javax.swing.JMenu();
         jMenuMasterData = new javax.swing.JMenu();
+        itemApoteker = new javax.swing.JMenuItem();
+        itemDokter = new javax.swing.JMenuItem();
+        itemObat = new javax.swing.JMenuItem();
+        itemPasien = new javax.swing.JMenuItem();
+        itemSupplier = new javax.swing.JMenuItem();
+        itemUser = new javax.swing.JMenuItem();
         jMenuTransaksi = new javax.swing.JMenu();
         jMenuLaporan = new javax.swing.JMenu();
         jMenuItemPembelian = new javax.swing.JMenuItem();
@@ -55,18 +172,46 @@ public class TransaksiPenjualan extends javax.swing.JFrame {
         jMenuItemSupplierMaster = new javax.swing.JMenuItem();
         jMenuItemDokter = new javax.swing.JMenuItem();
         jMenuItemApoteker = new javax.swing.JMenuItem();
+        jMenuItemPasien = new javax.swing.JMenuItem();
         jMenuLogout = new javax.swing.JMenu();
 
+        btnReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/reload.png"))); // NOI18N
+        btnReload.setText("Refresh");
+        btnReload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReloadActionPerformed(evt);
+            }
+        });
+
+        btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/printer-icon.png"))); // NOI18N
+        btnPrint.setText("Print");
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintActionPerformed(evt);
+            }
+        });
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Transaksi Penjualan");
 
         jPanel1.setBackground(new java.awt.Color(0, 184, 148));
 
         btnMPembelian.setText("Pembelian");
+        btnMPembelian.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMPembelianActionPerformed(evt);
+            }
+        });
 
         btnMPenjualan.setBackground(new java.awt.Color(255, 255, 102));
         btnMPenjualan.setText("Penjualan");
 
-        jButton3.setText("E-Resep");
+        jbtnResep.setText("E-Resep");
+        jbtnResep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnResepActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -78,7 +223,7 @@ public class TransaksiPenjualan extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Login As : Admin");
 
-        tabelPembelian.setModel(new javax.swing.table.DefaultTableModel(
+        tabelPenjualan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -86,23 +231,57 @@ public class TransaksiPenjualan extends javax.swing.JFrame {
                 "No Faktur", "Title 2"
             }
         ));
-        jScrollPane2.setViewportView(tabelPembelian);
+        tabelPenjualan.setRowHeight(30);
+        jScrollPane2.setViewportView(tabelPenjualan);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Black", 3, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("DATA PENJUALAN");
 
-        jButton4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/plus.png"))); // NOI18N
-        jButton4.setText("Input Penjualan");
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTambah.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jTambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/plus.png"))); // NOI18N
+        jTambah.setText("Input Penjualan");
+        jTambah.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton4MouseClicked(evt);
+                jTambahMouseClicked(evt);
             }
         });
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        jTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                jTambahActionPerformed(evt);
+            }
+        });
+
+        btnExpiredObat.setText("Expired Obat");
+        btnExpiredObat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExpiredObatActionPerformed(evt);
+            }
+        });
+
+        btnStokObat.setText("Stok Obat");
+        btnStokObat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStokObatActionPerformed(evt);
+            }
+        });
+
+        lblCount.setFont(new java.awt.Font("Segoe UI", 3, 18)); // NOI18N
+        lblCount.setText("Jumlah");
+
+        btnReload1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/reload.png"))); // NOI18N
+        btnReload1.setText("Refresh");
+        btnReload1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReload1ActionPerformed(evt);
+            }
+        });
+
+        btnPrint1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/printer-icon.png"))); // NOI18N
+        btnPrint1.setText("Print");
+        btnPrint1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrint1ActionPerformed(evt);
             }
         });
 
@@ -114,23 +293,35 @@ public class TransaksiPenjualan extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(lblCount))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(14, 14, 14))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btnMPembelian, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnMPenjualan, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 398, Short.MAX_VALUE)
+                        .addComponent(jbtnResep, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnStokObat, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnExpiredObat)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 193, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(15, 15, 15))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnReload1)
+                .addGap(33, 33, 33)
+                .addComponent(btnPrint1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -143,22 +334,30 @@ public class TransaksiPenjualan extends javax.swing.JFrame {
                         .addComponent(jLabel2))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(22, 22, 22)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnMPembelian, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnMPenjualan, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnStokObat, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnExpiredObat, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnMPembelian, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnMPenjualan, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jbtnResep, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
-                        .addGap(23, 23, 23))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
-                .addGap(35, 35, 35))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblCount))
+                    .addComponent(jTambah, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnPrint1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnReload1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         jMenuDashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/home.png"))); // NOI18N
@@ -183,35 +382,122 @@ public class TransaksiPenjualan extends javax.swing.JFrame {
                 jMenuMasterDataActionPerformed(evt);
             }
         });
+
+        itemApoteker.setText("Data Apoteker");
+        itemApoteker.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemApotekerActionPerformed(evt);
+            }
+        });
+        jMenuMasterData.add(itemApoteker);
+
+        itemDokter.setText("Data Dokter");
+        itemDokter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemDokterActionPerformed(evt);
+            }
+        });
+        jMenuMasterData.add(itemDokter);
+
+        itemObat.setText("Data Obat");
+        itemObat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemObatActionPerformed(evt);
+            }
+        });
+        jMenuMasterData.add(itemObat);
+
+        itemPasien.setText("Data Pasien");
+        itemPasien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemPasienActionPerformed(evt);
+            }
+        });
+        jMenuMasterData.add(itemPasien);
+
+        itemSupplier.setText("Data Supplier");
+        itemSupplier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemSupplierActionPerformed(evt);
+            }
+        });
+        jMenuMasterData.add(itemSupplier);
+
+        itemUser.setText("Data User");
+        jMenuMasterData.add(itemUser);
+
         jMenuBar1.add(jMenuMasterData);
 
         jMenuTransaksi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/dompet.png"))); // NOI18N
         jMenuTransaksi.setText("Transaksi");
+        jMenuTransaksi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuTransaksiActionPerformed(evt);
+            }
+        });
         jMenuBar1.add(jMenuTransaksi);
 
         jMenuLaporan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/printer-icon.png"))); // NOI18N
         jMenuLaporan.setText("Laporan");
         jMenuLaporan.setToolTipText("Report");
 
-        jMenuItemPembelian.setText("Pembelian");
+        jMenuItemPembelian.setText("Data Pembelian");
+        jMenuItemPembelian.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemPembelianActionPerformed(evt);
+            }
+        });
         jMenuLaporan.add(jMenuItemPembelian);
 
-        jMenuItemPenjualan.setText("Penjualan");
+        jMenuItemPenjualan.setText("Data Penjualan");
+        jMenuItemPenjualan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemPenjualanActionPerformed(evt);
+            }
+        });
         jMenuLaporan.add(jMenuItemPenjualan);
 
         jMenu1.setText("Master");
 
-        jMenuItemObatMaster.setText("Obat");
+        jMenuItemObatMaster.setText("Data Obat");
+        jMenuItemObatMaster.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemObatMasterActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItemObatMaster);
 
-        jMenuItemSupplierMaster.setText("Supplier");
+        jMenuItemSupplierMaster.setText("Data Supplier");
+        jMenuItemSupplierMaster.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemSupplierMasterActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItemSupplierMaster);
 
-        jMenuItemDokter.setText("Dokter");
+        jMenuItemDokter.setText("Data Dokter");
+        jMenuItemDokter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemDokterActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItemDokter);
 
-        jMenuItemApoteker.setText("Apoteker");
+        jMenuItemApoteker.setText("Data Apoteker");
+        jMenuItemApoteker.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemApotekerActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItemApoteker);
+
+        jMenuItemPasien.setText("Data Pasien");
+        jMenuItemPasien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemPasienActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItemPasien);
 
         jMenuLaporan.add(jMenu1);
 
@@ -269,19 +555,239 @@ public class TransaksiPenjualan extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jMenuLogoutMouseClicked
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void jTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTambahActionPerformed
         try {
-            PopPembelian pop=new PopPembelian();
+            PopPenjualan pop=new PopPenjualan();
             pop.setVisible(true);
-            pop.setAlwaysOnTop(rootPaneCheckingEnabled);
+            //pop.setAlwaysOnTop(rootPaneCheckingEnabled);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(TransaksiPenjualan.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_jTambahActionPerformed
 
-    private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked
+    private void jTambahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTambahMouseClicked
 
-    }//GEN-LAST:event_jButton4MouseClicked
+    }//GEN-LAST:event_jTambahMouseClicked
+
+    private void itemApotekerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemApotekerActionPerformed
+        MasterDataApoteker mda = new MasterDataApoteker();
+        mda.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemApotekerActionPerformed
+
+    private void itemDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemDokterActionPerformed
+        MasterDataDokter mdd = new MasterDataDokter();
+        mdd.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemDokterActionPerformed
+
+    private void itemObatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemObatActionPerformed
+        MasterDataObat mdo = new MasterDataObat();
+        mdo.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemObatActionPerformed
+
+    private void itemPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemPasienActionPerformed
+        MasterDataPasien mdp = new MasterDataPasien();
+        mdp.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemPasienActionPerformed
+
+    private void itemSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSupplierActionPerformed
+        MasterDataSupplier mds = new MasterDataSupplier();
+        mds.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemSupplierActionPerformed
+
+    private void jMenuTransaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuTransaksiActionPerformed
+        TransaksiPembelian mds = new TransaksiPembelian();
+        mds.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jMenuTransaksiActionPerformed
+
+    private void btnMPembelianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMPembelianActionPerformed
+        TransaksiPembelian mds = new TransaksiPembelian();
+        mds.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnMPembelianActionPerformed
+
+    private void jbtnResepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnResepActionPerformed
+        TransaksiResep mds = new TransaksiResep();
+        mds.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jbtnResepActionPerformed
+
+    private void btnExpiredObatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExpiredObatActionPerformed
+        ExpiredDataObat mds = new ExpiredDataObat();
+        mds.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnExpiredObatActionPerformed
+
+    private void btnStokObatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStokObatActionPerformed
+        StokDataObat mds = new StokDataObat();
+        mds.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnStokObatActionPerformed
+
+    private void btnReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReloadActionPerformed
+        refreshTabel();
+    }//GEN-LAST:event_btnReloadActionPerformed
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+        try {
+            HashMap data=new HashMap();
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/LaporanResep.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data Resep");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnPrintActionPerformed
+
+    private void btnReload1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReload1ActionPerformed
+        refreshTabel();
+    }//GEN-LAST:event_btnReload1ActionPerformed
+
+    private void btnPrint1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrint1ActionPerformed
+        try {
+            HashMap data=new HashMap();
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/LaporanResep.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data Resep");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnPrint1ActionPerformed
+
+    private void jMenuItemPembelianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPembelianActionPerformed
+        ReportMenu pop=new ReportMenu();
+        pop.setVisible(true);
+        pop.setAlwaysOnTop(rootPaneCheckingEnabled);
+    }//GEN-LAST:event_jMenuItemPembelianActionPerformed
+
+    private void jMenuItemPenjualanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPenjualanActionPerformed
+        ReportMenu pop=new ReportMenu();
+        pop.setVisible(true);
+        pop.setAlwaysOnTop(rootPaneCheckingEnabled);
+    }//GEN-LAST:event_jMenuItemPenjualanActionPerformed
+
+    private void jMenuItemObatMasterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemObatMasterActionPerformed
+        String petugas = PetugasSession.getU_username();
+        try {
+            HashMap data=new HashMap();
+            data.put("petugas", petugas);
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/master/LapDataObat.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data ");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItemObatMasterActionPerformed
+
+    private void jMenuItemSupplierMasterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSupplierMasterActionPerformed
+        String petugas = PetugasSession.getU_username();
+        try {
+            HashMap data=new HashMap();
+            data.put("petugas", petugas);
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/master/LapDataSupplier.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data ");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        //        try {
+            //          File file = new File("src/com/apotikapp/views/report/master/LapDataSupplier.jrxml");
+            //            JasperDesign jasperDesign = JRXmlLoader.load(file);
+            //            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+            //            JasperPrint jasperPrint = net.sf.jasperreports.engine.JasperFillManager.fillReport(jasperReport, null, Koneksi.getConnection());
+            //            JasperViewer.viewReport(jasperPrint, false);
+            //        }catch (Exception e) {
+            //             JOptionPane.showMessageDialog(null, "Error " + e.getMessage());
+            //            System.out.println(e);
+            //            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+            //        }
+    }//GEN-LAST:event_jMenuItemSupplierMasterActionPerformed
+
+    private void jMenuItemDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDokterActionPerformed
+        String petugas = PetugasSession.getU_username();
+        try {
+            HashMap data=new HashMap();
+            data.put("petugas", petugas);
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/master/LapDataDokter.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data ");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItemDokterActionPerformed
+
+    private void jMenuItemApotekerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemApotekerActionPerformed
+        String petugas = PetugasSession.getU_username();
+        try {
+            HashMap data=new HashMap();
+            data.put("petugas", petugas);
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/master/LapDataApoteker.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data ");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error " + e);
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItemApotekerActionPerformed
+
+    private void jMenuItemPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPasienActionPerformed
+        String petugas = PetugasSession.getU_username();
+        try {
+            HashMap data=new HashMap();
+            data.put("petugas", petugas);
+            InputStream is=this.getClass().getResourceAsStream("/com/apotikapp/views/report/master/LapDataPasien.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint cetak_laporan = JasperFillManager.fillReport(jasperReport, data, Koneksi.getConnection());
+            JasperViewer LaporanData=new JasperViewer(cetak_laporan, false);
+            LaporanData.setTitle("Laporan Data ");
+            LaporanData.setVisible(true);
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error " + e);
+            System.out.println(e);
+            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        //      try {
+            //          File file = new File("src/com/apotikapp/views/report/master/LapDataPasien.jrxml");
+            //            JasperDesign jasperDesign = JRXmlLoader.load(file);
+            //            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+            //            JasperPrint jasperPrint = net.sf.jasperreports.engine.JasperFillManager.fillReport(jasperReport, null, Koneksi.getConnection());
+            //            JasperViewer.viewReport(jasperPrint, false);
+            //        }catch (Exception e) {
+            //            System.out.println(e);
+            //            JOptionPane.showMessageDialog(rootPane, "Data tidak ditemukan!", "TIDAK ADA DATA!", JOptionPane.INFORMATION_MESSAGE);
+            //        }
+    }//GEN-LAST:event_jMenuItemPasienActionPerformed
 
     /**
      * @param args the command line arguments
@@ -334,10 +840,20 @@ public class TransaksiPenjualan extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnExpiredObat;
     private javax.swing.JButton btnMPembelian;
     private javax.swing.JButton btnMPenjualan;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton btnPrint;
+    private javax.swing.JButton btnPrint1;
+    private javax.swing.JButton btnReload;
+    private javax.swing.JButton btnReload1;
+    private javax.swing.JButton btnStokObat;
+    private javax.swing.JMenuItem itemApoteker;
+    private javax.swing.JMenuItem itemDokter;
+    private javax.swing.JMenuItem itemObat;
+    private javax.swing.JMenuItem itemPasien;
+    private javax.swing.JMenuItem itemSupplier;
+    private javax.swing.JMenuItem itemUser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -347,16 +863,22 @@ public class TransaksiPenjualan extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemApoteker;
     private javax.swing.JMenuItem jMenuItemDokter;
     private javax.swing.JMenuItem jMenuItemObatMaster;
+    private javax.swing.JMenuItem jMenuItemPasien;
     private javax.swing.JMenuItem jMenuItemPembelian;
+    private javax.swing.JMenuItem jMenuItemPembelian1;
     private javax.swing.JMenuItem jMenuItemPenjualan;
     private javax.swing.JMenuItem jMenuItemSupplierMaster;
     private javax.swing.JMenu jMenuLaporan;
+    private javax.swing.JMenu jMenuLaporan1;
     private javax.swing.JMenu jMenuLogout;
     private javax.swing.JMenu jMenuMasterData;
     private javax.swing.JMenu jMenuTransaksi;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTable tabelPembelian;
+    private javax.swing.JButton jTambah;
+    private javax.swing.JButton jbtnResep;
+    private javax.swing.JLabel lblCount;
+    private javax.swing.JTable tabelPenjualan;
     // End of variables declaration//GEN-END:variables
 }
