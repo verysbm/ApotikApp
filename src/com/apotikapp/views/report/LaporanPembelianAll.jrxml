@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Laporan Pembelian" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f8603b8f-b42c-46d0-9261-2fc9201a48ad">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="d_dari" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="d_sampai" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="petugas" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	tb_beli.id_beli,
+	tb_beli.tgl_faktur,
+	tb_beli.no_faktur,
+	tb_beli.tgl_beli,
+	tb_supplier.nama_supplier AS nama_supplier,
+	tb_apoteker.nama_apoteker AS nama_apoteker,
+	tb_beli.total_harga 
+FROM
+	tb_beli
+	JOIN tb_supplier ON tb_supplier.id_supplier = tb_beli.id_supplier
+	JOIN tb_apoteker ON tb_apoteker.id_apoteker = tb_beli.id_apoteker ]]>
+	</queryString>
+	<field name="id_beli" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tgl_faktur" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="no_faktur" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tgl_beli" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_supplier" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_apoteker" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_harga" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="158" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="134" width="145" height="20" uuid="b2991b39-07b2-409d-861c-7349708319c8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[Laporan Data Pembelian]]></text>
+			</staticText>
+			<image>
+				<reportElement x="123" y="0" width="123" height="103" uuid="6bf07f99-bdce-4a89-97c2-ea2f396809f9"/>
+				<imageExpression><![CDATA["D:\\FLO\\ApotikApp\\src\\Images\\logo.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="283" y="53" width="250" height="43" uuid="90ef6643-8cdd-499a-87df-bacd6e5551c7"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[APJ: apt.  Iput Yuly Istanti, S.Si.
+SIPA: 19770714/SIPA_33.13/2021/2.157
+Ijin : 13062200314170001
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="283" y="13" width="250" height="41" uuid="cb31e9e0-ecf7-43fa-9d97-65b93d3d1b83"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUMBER WARAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="312" y="-3" width="182" height="21" uuid="727f4ff2-dfa5-4aa8-b95a-3d004a8b6b9a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APOTEK]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="96" width="801" height="1" uuid="3964868f-dd4e-464c-a26b-855a05b0705d"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="97" width="160" height="20" uuid="d75a1818-5b67-49a8-add1-a16e294290e4"/>
+				<text><![CDATA[Yth. Apoteker Penanggung Jawab]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="802" height="1" uuid="5fccf19c-2f0c-4484-90b5-f440b251fa95"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="0" y="0" width="43" height="15" forecolor="#000000" uuid="bc7fb0a2-8840-46c2-89cd-52b59f0defe5"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="123" y="0" width="80" height="15" forecolor="#000000" uuid="a449a744-e0ca-48f4-a1c8-914b0c298321"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[ID Pembelian]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="203" y="0" width="80" height="15" forecolor="#000000" uuid="ba34e9f3-b53d-4fe8-bfb7-a80872a17acf"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[No Faktur]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="43" y="1" width="80" height="15" forecolor="#000000" uuid="177ed498-9510-4ed9-8eeb-ff37449ce4b1"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Tanggal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="283" y="1" width="100" height="15" forecolor="#000000" uuid="0e1a9555-b87b-4820-9fd1-02e9c7373577"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Supplier]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="383" y="1" width="80" height="15" forecolor="#000000" uuid="967715c5-dd63-40d4-af66-65984eb34df2"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Tgl Faktur]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="463" y="1" width="97" height="15" forecolor="#000000" uuid="ad2687e6-3fc7-47e6-973f-a407a05ef483"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Apoteker]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="560" y="1" width="100" height="15" forecolor="#000000" uuid="48fe0b63-482e-46fb-b2d2-61ca1387c1d9"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<text><![CDATA[Total Harga]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="1" width="802" height="1" uuid="7bcc912b-866b-4b40-bf17-c1b0829e5e64"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<frame>
+				<reportElement style="Row" mode="Opaque" x="0" y="0" width="802" height="15" uuid="8b8c108e-0ab3-4b2b-8028-42993ef9f42e"/>
+				<textField pattern="yyyy/MM/dd">
+					<reportElement x="43" y="0" width="80" height="15" uuid="898fbebc-dac4-4afb-b8f0-1db4fecac42f"/>
+					<textFieldExpression><![CDATA[$F{tgl_beli}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="123" y="0" width="80" height="15" uuid="7bf1b11b-518c-4c6a-9990-c8fcf3f41bac"/>
+					<textFieldExpression><![CDATA[$F{id_beli}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="283" y="0" width="100" height="15" uuid="b5ae074e-e669-4e8d-9d64-f29ca37c4a58"/>
+					<textFieldExpression><![CDATA[$F{nama_supplier}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="383" y="0" width="80" height="15" uuid="4fed666c-ffe5-4e1d-b347-dff434cfd6ad"/>
+					<textFieldExpression><![CDATA[$F{tgl_faktur}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00">
+					<reportElement x="560" y="0" width="100" height="15" uuid="da4b5bb5-9aed-4d89-aa8b-6f808db8e9b9"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{total_harga}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="2" y="0" width="41" height="15" uuid="c8c581dd-a12f-4f72-a1dc-b43a524d51db"/>
+					<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="203" y="0" width="80" height="15" uuid="7d201dcf-f34f-4415-9a85-a97de8326df5"/>
+					<textFieldExpression><![CDATA[$F{no_faktur}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="463" y="0" width="97" height="15" uuid="f6b19c75-fc9f-4dac-8ba0-663bdc47743e"/>
+					<textFieldExpression><![CDATA[$F{nama_apoteker}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="100" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="802" height="1" uuid="843518f4-4715-47d2-8297-8d3825b3e345"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="681" y="14" width="113" height="20" uuid="4e0b294a-c5a1-469f-ae40-a8fa0d9fb16b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="660" y="68" width="100" height="20" uuid="18f713cf-b4c8-4e5c-99f1-22b6f0b6130a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{petugas}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="623" y="14" width="73" height="20" uuid="0ab95c26-c40e-4e4b-a909-11699a583c44"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Karanganyar,]]></text>
+			</staticText>
+			<line>
+				<reportElement x="625" y="88" width="171" height="1" uuid="735c4f14-300e-449c-869d-7401d04bf9c7"/>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="25" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-21" y="1" width="843" height="24" forecolor="#D0B48E" backcolor="#F2EBDF" uuid="9d49f929-3a3e-4a38-a1e2-6c7c65cb8afc"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="783" y="1" width="40" height="20" forecolor="#736343" uuid="6967090d-34af-4770-bd42-a69aa96ee74c"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="703" y="1" width="80" height="20" forecolor="#736343" uuid="6199c72f-c868-4433-af9d-1cda61bc7ee9"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="22" y="1" width="197" height="20" forecolor="#736343" uuid="abd44112-27c9-4728-ac0b-692932372555"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
